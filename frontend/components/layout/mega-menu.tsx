@@ -1,5 +1,6 @@
 import Link from "next/link";
 import Image from "next/image";
+import type { FocusEvent } from "react";
 import { ChevronDown } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useMediaQuery } from "@/hooks/use-media-query";
@@ -34,7 +35,7 @@ function MenuLink({ link }: { link: MegaMenuLink }) {
   return (
     <Link
       href={linkHref(link)}
-      className="text-muted-foreground hover:text-foreground transition-all duration-200 ease-out hover:translate-x-1 text-sm"
+      className="text-muted-foreground hover:text-foreground focus-visible:text-accent focus-visible:outline-none rounded-sm transition-all duration-200 ease-out hover:translate-x-1 focus-visible:ring-2 focus-visible:ring-ring text-sm"
     >
       {link.label}
     </Link>
@@ -88,18 +89,37 @@ export function MegaMenu({
   onMouseLeave,
   onClick,
 }: MegaMenuProps) {
+  // Keyboard users: opening/closing the menu on focus, and closing when focus leaves the menu entirely.
+  const handleFocusCapture = () => {
+    if (!isOpen) {
+      onMouseEnter();
+    }
+  };
+  const handleBlurCapture = (event: FocusEvent<HTMLDivElement>) => {
+    if (!event.currentTarget.contains(event.relatedTarget as Node | null)) {
+      onMouseLeave();
+    }
+  };
+
   return (
     // `static` so the panel anchors to the full-width container-page in the header,
     // not to this narrow trigger — that keeps the panel centered at every screen size.
-    <div className="static" onMouseEnter={onMouseEnter} onMouseLeave={onMouseLeave}>
+    <div
+      className="static flex h-full items-center"
+      onMouseEnter={onMouseEnter}
+      onMouseLeave={onMouseLeave}
+      onFocusCapture={handleFocusCapture}
+      onBlurCapture={handleBlurCapture}
+    >
       <button
         type="button"
         aria-expanded={isOpen}
         aria-haspopup="true"
         onClick={onClick}
         className={cn(
-          "flex items-center gap-1 px-2 py-2 text-[12px] tracking-[0.1em] uppercase transition-colors xl:px-3 xl:text-[13px] xl:tracking-[0.12em]",
+          "flex items-center gap-1 rounded-sm px-2 py-2 text-[12px] uppercase tracking-[0.1em] transition-colors xl:px-3 xl:text-[13px] xl:tracking-[0.12em]",
           "hover:text-accent",
+          "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring",
           isOpen && "text-accent",
         )}
       >
@@ -121,7 +141,7 @@ export function MegaMenu({
             "max-h-[calc(100dvh-5rem)] overflow-y-auto overscroll-contain",
             "bg-card border border-border/50 rounded-2xl p-6 shadow-lg",
             "dark:bg-card/90 dark:border-border backdrop-blur-md",
-            "animate-fade-in transition-all duration-200 ease-out",
+            "animate-menu-in",
           )}
         >
           <div className="flex items-stretch gap-8 xl:gap-12">

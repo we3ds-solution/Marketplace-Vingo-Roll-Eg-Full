@@ -7,7 +7,7 @@ import { cn } from "@/lib/utils";
 import { useAuth } from "@/lib/auth/auth-context";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
-import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
+import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
 import {
   LayoutDashboard,
   Package,
@@ -252,6 +252,7 @@ export function AdminShell({ children }: { children: ReactNode }) {
                 <SheetTitle className="font-display text-base">
                   Vingo Roll <span className="text-muted-foreground text-xs font-normal">/ admin</span>
                 </SheetTitle>
+                <SheetDescription className="sr-only">Admin navigation</SheetDescription>
               </SheetHeader>
               <div className="h-[calc(100%-3.5rem)]">
                 <AdminNav onNavigate={closeMobile} />

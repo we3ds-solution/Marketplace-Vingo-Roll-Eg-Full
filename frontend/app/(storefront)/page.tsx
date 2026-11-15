@@ -36,6 +36,10 @@ export default async function HomePage() {
             className="animate-image-reveal h-full w-full object-cover"
           />
           <div className="veil absolute inset-0" aria-hidden="true" />
+          <div
+            aria-hidden="true"
+            className="absolute inset-x-0 top-0 h-40 bg-gradient-to-b from-black/60 via-black/20 to-transparent"
+          />
           <div className="absolute inset-0 flex items-end">
             <div className="container-page pb-16 md:pb-24">
               <p className="eyebrow animate-fade-up text-white/70">Made to measure since 1998</p>

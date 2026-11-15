@@ -6,7 +6,7 @@ import { usePathname } from "next/navigation";
 import { useTheme } from "next-themes";
 import { Heart, LayoutDashboard, Menu, Moon, Search, Sun, User, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
+import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
 import {
   Accordion,
   AccordionContent,
@@ -23,6 +23,10 @@ import { cn } from "@/lib/utils";
 
 const menus = [nav.shop, nav.inspiration, nav.services, nav.guides];
 
+/** Consistent keyboard focus ring for bare icon controls in the header. */
+const FOCUS_RING =
+  "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background rounded-sm";
+
 function linkHref(link: { to: string; slug?: string }) {
   return "slug" in link && link.slug ? `/shop/${link.slug}` : link.to;
 }
@@ -36,13 +40,33 @@ function ThemeToggle() {
       type="button"
       onClick={() => setTheme(isDark ? "light" : "dark")}
       aria-label={isDark ? "Switch to light theme" : "Switch to dark theme"}
-      className="hover:text-accent grid h-10 w-10 place-items-center transition-colors"
+      className={`${FOCUS_RING} text-muted-foreground hidden h-10 w-10 place-items-center transition-colors hover:text-accent sm:grid`}
     >
       {isDark ? (
         <Sun className="h-[18px] w-[18px]" aria-hidden="true" />
       ) : (
         <Moon className="h-[18px] w-[18px]" aria-hidden="true" />
       )}
+    </button>
+  );
+}
+
+function SheetThemeToggle() {
+  const { resolvedTheme, setTheme } = useTheme();
+  const hydrated = useHydrated();
+  const isDark = hydrated && resolvedTheme === "dark";
+  return (
+    <button
+      type="button"
+      onClick={() => setTheme(isDark ? "light" : "dark")}
+      className="text-muted-foreground hover:text-foreground inline-flex items-center gap-1.5 text-xs transition-colors"
+    >
+      {isDark ? (
+        <Sun className="h-4 w-4" aria-hidden="true" />
+      ) : (
+        <Moon className="h-4 w-4" aria-hidden="true" />
+      )}
+      {isDark ? "Light mode" : "Dark mode"}
     </button>
   );
 }
@@ -56,7 +80,7 @@ function CountBadge({ count }: { count: number }) {
   );
 }
 
-export function SiteHeader() {
+export function SiteHeader({ overlay = false }: { overlay?: boolean }) {
   const [open, setOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const [openMenu, setOpenMenu] = useState<string | null>(null);
@@ -96,36 +120,44 @@ export function SiteHeader() {
     return () => window.removeEventListener("keydown", onKeyDown);
   }, [openMenu]);
 
-  return (
-    <>
-      {bannerVisible && (
-        <div className="bg-primary text-primary-foreground relative px-4 py-2 text-center text-[11px] tracking-[0.16em] uppercase">
-          <span>Free swatches on every order · Complimentary design consultation</span>
-          <button
-            onClick={() => setBannerVisible(false)}
-            className="hover:opacity-70 absolute right-4 top-1/2 -translate-y-1/2 transition-opacity"
-            aria-label="Close announcement"
-          >
-            <X className="h-4 w-4" aria-hidden="true" />
-          </button>
-        </div>
-      )}
-      <header
-        className={cn(
-          "bg-background/90 sticky top-0 z-50 border-b backdrop-blur transition-colors",
-          scrolled ? "border-border" : "border-transparent",
-        )}
-        onMouseLeave={() => setOpenMenu(null)}
-        onBlurCapture={(event) => {
-          // Focus moved outside the header entirely — close the mega menu for keyboard users
-          if (!event.currentTarget.contains(event.relatedTarget as Node | null)) {
-            setOpenMenu(null);
-          }
-        }}
+  const onImage = overlay && !scrolled;
+
+  const banner = bannerVisible ? (
+    <div className="pointer-events-auto bg-primary/90 text-primary-foreground relative px-10 py-2 text-center text-[11px] tracking-[0.16em] uppercase">
+      <span className="hidden min-[460px]:inline">Free swatches on every order · Complimentary design consultation</span>
+      <span className="min-[460px]:hidden">Free swatches on every order</span>
+      <button
+        onClick={() => setBannerVisible(false)}
+        className={`${FOCUS_RING} hover:opacity-70 absolute right-4 top-1/2 -translate-y-1/2 transition-opacity`}
+        aria-label="Close announcement"
       >
-        <div className="container-page relative flex h-16 items-center justify-between gap-4 md:h-20">
-          <div className="flex items-center gap-2 lg:hidden">
-            <Sheet open={open} onOpenChange={setOpen}>
+        <X className="h-4 w-4" aria-hidden="true" />
+      </button>
+    </div>
+  ) : null;
+
+  const header = (
+    <header
+      className={cn(
+        "sticky top-0 z-50 border-b transition-colors pointer-events-auto",
+        onImage
+          ? "border-transparent bg-transparent text-white"
+          : "bg-background/90 backdrop-blur",
+        !onImage && (scrolled ? "border-border" : "border-transparent"),
+      )}
+      onMouseLeave={() => setOpenMenu(null)}
+      onBlurCapture={(event) => {
+        // Focus moved outside the header entirely — close the mega menu for keyboard users
+        if (!event.currentTarget.contains(event.relatedTarget as Node | null)) {
+          setOpenMenu(null);
+        }
+      }}
+    >
+        <div className="container-page relative flex h-16 items-center justify-between gap-3 md:h-20">
+          {/* Left group: hamburger on mobile + logo — brand stays flush-left at all widths */}
+          <div className="flex items-center gap-1 sm:gap-2 lg:gap-10">
+            <div className="flex items-center gap-2 lg:hidden">
+              <Sheet open={open} onOpenChange={setOpen}>
               <SheetTrigger asChild>
                 <Button variant="ghost" size="icon" aria-label="Open menu">
                   <Menu className="h-5 w-5" aria-hidden="true" />
@@ -134,6 +166,7 @@ export function SiteHeader() {
               <SheetContent side="left" className="w-[88vw] max-w-sm overflow-y-auto p-0">
                 <SheetHeader className="border-b p-5">
                   <SheetTitle className="font-display text-xl">Vingo Roll</SheetTitle>
+                  <SheetDescription className="sr-only">Site navigation menu</SheetDescription>
                 </SheetHeader>
                 <div className="p-5">
                   <Link
@@ -202,7 +235,7 @@ export function SiteHeader() {
                   <Button asChild className="mt-6 w-full">
                     <Link href="/quote">Get a quick quote</Link>
                   </Button>
-                  <div className="text-muted-foreground mt-4 flex flex-wrap gap-4 text-xs">
+                  <div className="text-muted-foreground mt-4 flex flex-wrap items-center gap-4 text-xs">
                     <Link href="/account" onClick={() => setOpen(false)} className="hover:text-foreground">Account</Link>
                     <Link href="/wishlist" onClick={() => setOpen(false)} className="hover:text-foreground">Wishlist</Link>
                     {isAdmin && (
@@ -210,17 +243,18 @@ export function SiteHeader() {
                         Studio dashboard
                       </Link>
                     )}
+                    <SheetThemeToggle />
                   </div>
                 </div>
               </SheetContent>
             </Sheet>
           </div>
-
-          <Link href="/" className="font-display text-xl tracking-[0.2em] uppercase md:text-2xl">
+          <Link href="/" className="font-display text-lg uppercase tracking-[0.18em] whitespace-nowrap sm:text-xl md:text-2xl">
             Vingo<span className="text-accent">.</span>Roll
           </Link>
+          </div>
 
-          <nav aria-label="Primary" className="hidden items-center gap-0.5 lg:flex xl:gap-1">
+          <nav aria-label="Primary" className="hidden h-full items-center gap-0.5 lg:flex xl:gap-1">
             {menus.map((menu) => (
               <MegaMenu
                 key={menu.label}
@@ -236,7 +270,7 @@ export function SiteHeader() {
             ))}
             <Link
               href="/about"
-              className="hover:text-accent px-2 py-2 text-[12px] uppercase tracking-[0.1em] transition-colors xl:px-3 xl:text-[13px] xl:tracking-[0.12em]"
+              className="hover:text-accent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring rounded-sm px-2 py-2 text-[12px] uppercase tracking-[0.1em] transition-colors xl:px-3 xl:text-[13px] xl:tracking-[0.12em]"
             >
               About
             </Link>
@@ -246,7 +280,7 @@ export function SiteHeader() {
             <Link
               href="/search"
               aria-label="Search"
-              className="hover:text-accent grid h-10 w-10 place-items-center transition-colors"
+              className={`${FOCUS_RING} hover:text-accent grid h-10 w-10 place-items-center transition-colors`}
             >
               <Search className="h-[18px] w-[18px]" aria-hidden="true" />
             </Link>
@@ -254,7 +288,7 @@ export function SiteHeader() {
             <Link
               href="/wishlist"
               aria-label="Wishlist"
-              className="hover:text-accent relative hidden h-10 w-10 place-items-center transition-colors xl:grid"
+              className={`${FOCUS_RING} hover:text-accent relative hidden h-10 w-10 place-items-center transition-colors xl:grid`}
             >
               <Heart className="h-[18px] w-[18px]" aria-hidden="true" />
               <CountBadge count={hydrated ? wishlist.length : 0} />
@@ -264,7 +298,7 @@ export function SiteHeader() {
                 href="/admin"
                 aria-label="Studio dashboard"
                 title="Studio dashboard"
-                className="hover:text-accent hidden h-10 items-center justify-center transition-colors sm:flex sm:w-10 xl:w-auto xl:gap-1.5 xl:px-3"
+                className={`${FOCUS_RING} hover:text-accent hidden h-10 items-center justify-center transition-colors sm:flex sm:w-10 xl:w-auto xl:gap-1.5 xl:px-3`}
               >
                 <LayoutDashboard className="h-[18px] w-[18px] xl:hidden" aria-hidden="true" />
                 <span className="hidden text-[13px] uppercase tracking-[0.12em] xl:inline">Dashboard</span>
@@ -273,14 +307,32 @@ export function SiteHeader() {
             <Link
               href="/account"
               aria-label="Account"
-              className="hover:text-accent hidden h-10 w-10 place-items-center transition-colors sm:grid"
+              className={`${FOCUS_RING} hover:text-accent hidden h-10 w-10 place-items-center transition-colors sm:grid`}
             >
               <User className="h-[18px] w-[18px]" aria-hidden="true" />
             </Link>
             <CartDrawer />
           </div>
         </div>
-      </header>
+    </header>
+  );
+
+  if (overlay) {
+    // Immersive mode: the header overlays the hero from y = 0.
+    // `absolute inset-0` spans the full page so the header can stick for the entire scroll;
+    // `pointer-events-none` lets clicks pass through to the hero (children opt back in).
+    return (
+      <div className="pointer-events-none absolute inset-0 z-40">
+        {banner}
+        {header}
+      </div>
+    );
+  }
+
+  return (
+    <>
+      {banner}
+      {header}
     </>
   );
 }

@@ -40,7 +40,7 @@ export function CartDrawer() {
       <SheetTrigger asChild>
         <button
           aria-label="Open cart"
-          className="hover:text-accent relative grid h-10 w-10 place-items-center transition-colors"
+          className="hover:text-accent focus-visible:ring-ring focus-visible:ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 relative grid h-10 w-10 place-items-center rounded-sm transition-colors"
         >
           <ShoppingBag className="h-[18px] w-[18px]" aria-hidden="true" />
           {hydrated && count > 0 && (

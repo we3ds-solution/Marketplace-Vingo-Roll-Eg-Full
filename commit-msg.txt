@@ -1,0 +1,14 @@
+feat(frontend): immersive hero header, sticky fix and mega menu hover
+
+- Homepage hero starts at y=0 with the announcement bar + nav overlaying the
+  photo (transparent at top, solid on scroll); other pages keep the solid header
+- Fix sticky header in overlay mode (intermediate div was its containing block,
+  so sticky had no room) — now sticks at the top for the whole scroll
+- Mega menu hover gap eliminated: nav and wrappers stretch to the header's full
+  height so the pointer never leaves the trigger before reaching the panel
+- Brand/logo flush-left next to the mobile hamburger
+- Drawers get rounded corners; mobile sheet title left-aligned; theme toggle
+  available inside the mobile sheet
+- Focus-visible rings across header/menu icon controls; keyboard open/close for
+  mega menus (focus opens, blur outside closes)
+- Catalogue/hero imagery through next/image where not already
