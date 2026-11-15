@@ -1,11 +1,12 @@
 /**
  * useProductFilters - Hook for filtering and sorting products
- * Refactored from use-filtered-products.ts
+ * Products carry their association slugs from the API (roomSlugs,
+ * collectionSlugs, materialTiers), so filters are plain membership checks.
  */
 
 import { useMemo } from "react";
 import type { Product } from "@/types";
-import type { FilterState } from "@/types/common";
+import type { FilterState } from "@/types/filters";
 
 export function useProductFilters(products: Product[], filters: FilterState): Product[] {
   return useMemo(() => {
@@ -16,18 +17,16 @@ export function useProductFilters(products: Product[], filters: FilterState): Pr
       (p) => p.price >= filters.priceRange[0] && p.price <= filters.priceRange[1],
     );
 
-    // Material tier filter
+    // Material tier filter — the API tells us which fabric tiers the product offers
     if (filters.materialTiers.length > 0) {
       filtered = filtered.filter((p) =>
-        p.materials?.some((m) => filters.materialTiers.includes(m.tier || "")),
+        p.materialTiers?.some((t) => filters.materialTiers.includes(t.toLowerCase())),
       );
     }
 
     // Light control filter
     if (filters.lightControl.length > 0) {
-      filtered = filtered.filter((p) =>
-        p.materials?.some((m) => filters.lightControl.includes(m.lightControl || "")),
-      );
+      filtered = filtered.filter((p) => filters.lightControl.includes(p.lightControl || ""));
     }
 
     // Room filter
@@ -40,16 +39,19 @@ export function useProductFilters(products: Product[], filters: FilterState): Pr
       );
     }
 
-    // Collection filter
+    // Collection filter (matches by collection slug)
     if (filters.collections.length > 0) {
       filtered = filtered.filter((p) =>
-        p.collections?.some((c) => filters.collections.includes(c.slug)),
+        p.collectionSlugs?.some((slug) => filters.collections.includes(slug)),
       );
     }
 
-    // Style filter
+    // Style filter (case-insensitive)
     if (filters.styles.length > 0) {
-      filtered = filtered.filter((p) => p.styles?.some((s) => filters.styles.includes(s)));
+      const wanted = filters.styles.map((s) => s.toLowerCase());
+      filtered = filtered.filter((p) =>
+        p.styles?.some((s) => wanted.includes(s.toLowerCase())),
+      );
     }
 
     // Sorting
@@ -73,8 +75,8 @@ function applySorting(products: Product[], sortBy: FilterState["sortBy"]): Produ
       break;
     case "newest":
       sorted.sort((a, b) => {
-        const dateA = new Date(a.createdAt || 0).getTime();
-        const dateB = new Date(b.createdAt || 0).getTime();
+        const dateA = a.createdAt ? new Date(a.createdAt).getTime() : 0;
+        const dateB = b.createdAt ? new Date(b.createdAt).getTime() : 0;
         return dateB - dateA;
       });
       break;

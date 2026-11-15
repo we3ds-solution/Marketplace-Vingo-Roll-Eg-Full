@@ -1,20 +1,40 @@
+"use client";
+
 import { useState, type FormEvent } from "react";
 import Link from "next/link";
-import { footerColumns } from "@/data/navigation";
+import { footerColumns } from "@/lib/data/navigation";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { apiSubscribeNewsletter, ApiError } from "@/lib/api/client";
 
 export function SiteFooter() {
   const [email, setEmail] = useState("");
-  const [status, setStatus] = useState<"idle" | "error" | "done">("idle");
+  const [status, setStatus] = useState<"idle" | "submitting" | "error" | "done">("idle");
+  const [message, setMessage] = useState<string | null>(null);
 
-  function onSubmit(e: FormEvent) {
+  async function onSubmit(e: FormEvent) {
     e.preventDefault();
+
     if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email)) {
       setStatus("error");
+      setMessage("Enter a valid email address.");
       return;
     }
-    setStatus("done");
+
+    setStatus("submitting");
+    setMessage(null);
+
+    try {
+      await apiSubscribeNewsletter(email);
+      setStatus("done");
+      setEmail("");
+      setMessage("Thank you — you're on the list.");
+    } catch (error) {
+      setStatus("error");
+      setMessage(
+        error instanceof ApiError ? error.message : "Could not subscribe — please try again.",
+      );
+    }
   }
 
   return (
@@ -46,17 +66,16 @@ export function SiteFooter() {
                   aria-invalid={status === "error"}
                   aria-describedby="newsletter-status"
                 />
-                <Button type="submit" variant="secondary">
-                  Join
+                <Button type="submit" variant="secondary" disabled={status === "submitting"}>
+                  {status === "submitting" ? "Joining…" : "Join"}
                 </Button>
               </div>
               <p
                 id="newsletter-status"
                 role="status"
-                className="text-muted-foreground mt-2 min-h-5 text-xs"
+                className={`mt-2 min-h-5 text-xs ${status === "error" ? "text-destructive" : "text-muted-foreground"}`}
               >
-                {status === "error" ? "Enter a valid email address." : null}
-                {status === "done" ? "Thank you — you're on the list." : null}
+                {message ?? " "}
               </p>
             </form>
           </div>
@@ -68,22 +87,12 @@ export function SiteFooter() {
                 <ul className="space-y-2.5">
                   {col.links.map((link) => (
                     <li key={link.label}>
-                      {"slug" in link && link.slug ? (
-                        <Link
-                          to="/shop/$category"
-                          params={{ category: link.slug }}
-                          className="text-muted-foreground hover:text-foreground text-sm transition-colors"
-                        >
-                          {link.label}
-                        </Link>
-                      ) : (
-                        <Link
-                          to={link.to}
-                          className="text-muted-foreground hover:text-foreground text-sm transition-colors"
-                        >
-                          {link.label}
-                        </Link>
-                      )}
+                      <Link
+                        href={"slug" in link && link.slug ? `/shop/${link.slug}` : link.to}
+                        className="text-muted-foreground hover:text-foreground text-sm transition-colors"
+                      >
+                        {link.label}
+                      </Link>
                     </li>
                   ))}
                 </ul>

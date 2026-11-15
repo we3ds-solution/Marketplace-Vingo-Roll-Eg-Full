@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.OutputCaching;
 using Microsoft.EntityFrameworkCore;
 using Vingo.Application.Common.Interfaces;
 
@@ -16,6 +17,7 @@ public class ColorsController : ControllerBase
     }
 
     [HttpGet]
+    [OutputCache(Duration = 300)]
     public async Task<IActionResult> GetColors()
     {
         var colors = await _context.Colors

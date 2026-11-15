@@ -1,13 +1,17 @@
 using Microsoft.EntityFrameworkCore;
 using System.Reflection;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Vingo.Application.Common.Interfaces;
 using Vingo.Domain.Entities.Catalog;
+using Vingo.Domain.Entities.Content;
+using Vingo.Domain.Entities.Marketing;
 using Vingo.Domain.Entities.Orders;
 using Vingo.Domain.Entities.Shopping;
 
 namespace Vingo.Infrastructure.Persistence;
 
-public class VingoDbContext : DbContext, IApplicationDbContext
+public class VingoDbContext : IdentityDbContext<Identity.VingoUser, IdentityRole<Guid>, Guid>, IApplicationDbContext
 {
     public VingoDbContext(DbContextOptions<VingoDbContext> options) : base(options)
     {
@@ -20,6 +24,14 @@ public class VingoDbContext : DbContext, IApplicationDbContext
     public DbSet<Color> Colors => Set<Color>();
     public DbSet<Collection> Collections => Set<Collection>();
     public DbSet<ProductImage> ProductImages => Set<ProductImage>();
+    public DbSet<Size> Sizes => Set<Size>();
+    public DbSet<Room> Rooms => Set<Room>();
+    public DbSet<Need> Needs => Set<Need>();
+    public DbSet<Review> Reviews => Set<Review>();
+
+    // Content
+    public DbSet<InspirationStory> InspirationStories => Set<InspirationStory>();
+    public DbSet<InspirationSection> InspirationSections => Set<InspirationSection>();
 
     // Shopping
     public DbSet<Cart> Carts => Set<Cart>();
@@ -31,6 +43,13 @@ public class VingoDbContext : DbContext, IApplicationDbContext
     public DbSet<Order> Orders => Set<Order>();
     public DbSet<OrderItem> OrderItems => Set<OrderItem>();
     public DbSet<OrderStatusHistory> OrderStatusHistory => Set<OrderStatusHistory>();
+
+    // Marketing
+    public DbSet<Lead> Leads => Set<Lead>();
+    public DbSet<NewsletterSubscriber> NewsletterSubscribers => Set<NewsletterSubscriber>();
+
+    // Identity / Auth
+    public DbSet<Identity.RefreshToken> RefreshTokens => Set<Identity.RefreshToken>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {

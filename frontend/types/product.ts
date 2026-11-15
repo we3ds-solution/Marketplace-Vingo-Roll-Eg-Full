@@ -45,6 +45,8 @@ export type Product = {
   category?: { id: string; name: string; slug: string };
   collectionId?: string;
   collections?: Array<{ id: string; name: string; slug: string }>;
+  collectionSlugs?: string[];
+  materialTiers?: string[];
   price: number;
   compareAtPrice?: number;
   currency: string;

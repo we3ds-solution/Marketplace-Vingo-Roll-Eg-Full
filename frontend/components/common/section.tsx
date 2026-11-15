@@ -77,14 +77,14 @@ export function PageHeader({
   );
 }
 
-export function Crumbs({ items }: { items: { label: string; to?: string }[] }) {
+export function Crumbs({ items }: { items: { label: string; href?: string }[] }) {
   return (
     <nav aria-label="Breadcrumb" className="container-page pt-6">
       <ol className="text-muted-foreground flex flex-wrap items-center gap-2 text-xs">
         {items.map((item, i) => (
           <li key={item.label} className="flex items-center gap-2">
-            {item.to ? (
-              <Link to={item.to} className="hover:text-foreground transition-colors">
+            {item.href ? (
+              <Link href={item.href} className="hover:text-foreground transition-colors">
                 {item.label}
               </Link>
             ) : (
@@ -104,14 +104,18 @@ export function EmptyState({
   action,
 }: {
   title: string;
-  description: string;
+  description?: string;
   action?: ReactNode;
 }) {
   return (
     <div className="border-border bg-card/50 flex flex-col items-center rounded-sm border border-dashed px-6 py-20 text-center">
       <h3 className="text-2xl">{title}</h3>
-      <p className="text-muted-foreground mt-3 max-w-md text-sm leading-relaxed">{description}</p>
-      {action ? <div className="mt-6">{action}</div> : null}
+      {description && (
+        <p className="text-muted-foreground mt-3 max-w-md text-sm leading-relaxed">
+          {description}
+        </p>
+      )}
+      {action && <div className="mt-6">{action}</div>}
     </div>
   );
 }

@@ -1,6 +1,5 @@
 import { Ruler, Truck, Shield, Palette } from "lucide-react";
 import Link from "next/link";
-
 const items = [
   {
     icon: Palette,
@@ -43,7 +42,7 @@ export function TrustLayer({ compact = false }: { compact?: boolean }) {
           <h3 className="font-sans mt-3 text-sm font-medium">{item.title}</h3>
           <p className="text-muted-foreground mt-1.5 text-xs leading-relaxed">{item.body}</p>
           <Link
-            to={item.to}
+            href={item.to}
             className="text-accent mt-3 inline-block text-xs underline underline-offset-4"
           >
             {item.cta}

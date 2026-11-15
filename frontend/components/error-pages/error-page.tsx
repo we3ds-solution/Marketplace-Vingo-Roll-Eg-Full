@@ -1,3 +1,5 @@
+"use client";
+
 import { RotateCw } from "lucide-react";
 import { Button } from "@/components/ui/button";
 

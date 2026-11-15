@@ -23,6 +23,12 @@ public class CollectionConfiguration : IEntityTypeConfiguration<Collection>
         builder.HasIndex(c => c.Slug)
             .IsUnique();
 
+        builder.Property(c => c.Mood)
+            .HasMaxLength(200);
+
+        builder.Property(c => c.Story)
+            .HasMaxLength(1000);
+
         builder.Property(c => c.Description)
             .HasMaxLength(1000);
 

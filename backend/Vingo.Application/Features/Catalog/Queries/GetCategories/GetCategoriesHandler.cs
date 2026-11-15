@@ -22,8 +22,11 @@ public class GetCategoriesHandler
                 Id = c.Id,
                 Name = c.Name,
                 Slug = c.Slug,
+                Tagline = c.Tagline,
                 Description = c.Description,
                 ImageUrl = c.ImageUrl,
+                Group = c.Group,
+                ProductCount = c.Products.Count(p => p.IsActive),
                 ParentId = c.ParentId
             })
             .ToListAsync(cancellationToken);
@@ -37,7 +40,10 @@ public record CategoryDto
     public Guid Id { get; init; }
     public string Name { get; init; } = string.Empty;
     public string Slug { get; init; } = string.Empty;
+    public string? Tagline { get; init; }
     public string? Description { get; init; }
     public string? ImageUrl { get; init; }
+    public string? Group { get; init; }
+    public int ProductCount { get; init; }
     public Guid? ParentId { get; init; }
 }

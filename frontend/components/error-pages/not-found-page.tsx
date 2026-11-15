@@ -1,3 +1,5 @@
+"use client";
+
 import Link from "next/link";
 import { Search, MessageCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -190,7 +192,7 @@ export function NotFoundPage() {
               ].map((link) => (
                 <Link
                   key={link.to}
-                  to={link.to}
+                  href={link.to}
                   className={cn(
                     "text-sm text-muted-foreground hover:text-accent",
                     "transition-colors duration-200",

@@ -31,6 +31,37 @@ public class Material : BaseEntity
         IsActive = true;
     }
 
+    /// <summary>Full admin edit.</summary>
+    public void UpdateDetails(
+        string name,
+        string slug,
+        MaterialTier tier,
+        decimal priceDelta,
+        string? description,
+        string? swatchImageUrl,
+        int sortOrder,
+        bool isActive)
+    {
+        if (string.IsNullOrWhiteSpace(name))
+            throw new DomainException("Material name is required");
+
+        if (string.IsNullOrWhiteSpace(slug))
+            throw new DomainException("Material slug is required");
+
+        if (priceDelta < 0)
+            throw new DomainException("Material price delta cannot be negative");
+
+        Name = name.Trim();
+        Slug = slug.Trim().ToLowerInvariant();
+        Tier = tier;
+        PriceDelta = priceDelta;
+        Description = description;
+        SwatchImageUrl = swatchImageUrl;
+        SortOrder = sortOrder;
+        IsActive = isActive;
+        UpdatedAt = DateTime.UtcNow;
+    }
+
     public void UpdatePricing(decimal priceDelta)
     {
         PriceDelta = priceDelta;

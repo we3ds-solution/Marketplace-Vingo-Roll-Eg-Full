@@ -1,5 +1,7 @@
+"use client";
+
 import { useState } from "react";
-import type { FilterState } from "@/types/common";
+import type { FilterState } from "@/types/filters";
 import {
   FILTER_DEFAULTS,
   SORT_OPTIONS,
@@ -8,7 +10,7 @@ import {
   STYLES,
   ROOM_TYPES,
   COLLECTIONS_LIST,
-} from "@/types/common";
+} from "@/types/filters";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Label } from "@/components/ui/label";
@@ -21,8 +23,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { ChevronDown } from "lucide-react";
-import { cn } from "@/lib/utils";
-import { formatPrice } from "@/lib/formatters";
+import { cn, formatPrice } from "@/lib/utils";
 
 interface FilterSidebarProps {
   filters: FilterState;
@@ -103,7 +104,7 @@ export function FilterSidebar({ filters, onFiltersChange, resultsCount }: Filter
     selected,
     onChange,
   }: {
-    options: Array<{ value: string; label: string }>;
+    options: ReadonlyArray<{ value: string; label: string }>;
     selected: string[];
     onChange: (value: string, checked: boolean) => void;
   }) => (

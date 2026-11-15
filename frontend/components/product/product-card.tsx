@@ -1,15 +1,15 @@
+"use client";
+
 import Link from "next/link";
+import Image from "next/image";
 import { Heart, Star, ShoppingBag } from "lucide-react";
-import type { Product } from "@/types";
-import { formatPrice } from "@/lib/formatters";
-import { useWishlistStore } from "@/store/wishlist-store";
-import { useCartStore } from "@/store/cart-store";
+import { formatPrice, cn } from "@/lib/utils";
+import { useWishlistStore } from "@/stores/wishlist-store";
+import { useCartStore } from "@/stores/cart-store";
 import { useHydrated } from "@/hooks/use-hydrated";
-import { cn } from "@/lib/utils";
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
 import { QuickViewButton } from "@/components/product/product-quick-view";
 import { toast } from "sonner";
+import type { Product } from "@/types";
 
 export function ProductCard({
   product,
@@ -27,45 +27,52 @@ export function ProductCard({
   const hover = product.images[1] ?? main;
 
   const handleAddToCart = () => {
-    addToCart({
-      slug: product.slug,
-      name: product.name,
-      image: product.images[0]?.src || "",
-      unitPrice: product.price,
+    // Quick add — the API applies default options (first fabric/colour/size)
+    void addToCart({
+      productId: product.id,
       quantity: 1,
-      options: {
-        Material: product.materials[0]?.name || "",
-        Color: product.colors[0]?.name || "",
-        Size: product.sizes[0]?.label || "",
-      },
-    });
-    toast.success(`${product.name} added to cart`);
+    })
+      .then(() => toast.success(`${product.name} added to cart`))
+      .catch(() => {
+        // Error toast is surfaced by the store
+      });
   };
 
   return (
     <article className="group relative">
       <div className="bg-muted relative aspect-[4/5] overflow-hidden rounded-sm">
-        <Link href="/product/$slug" params={{ slug: product.slug }} className="absolute inset-0 z-0">
-          <img
+        <Link href={`/product/${product.slug}`} className="absolute inset-0 z-0">
+          <Image
             src={main?.src ?? ""}
             alt={main?.alt ?? product.name}
-            width={1200}
-            height={1500}
-            loading={priority ? "eager" : "lazy"}
-            className="h-full w-full object-cover transition-all duration-700 group-hover:scale-[1.04] group-hover:opacity-0"
+            fill
+            sizes="(min-width: 1536px) 25vw, (min-width: 1024px) 33vw, (min-width: 640px) 50vw, 100vw"
+            quality={80}
+            priority={priority}
+            className="object-cover transition-all duration-700 group-hover:scale-[1.04] group-hover:opacity-0"
           />
-          <img
-            src={hover?.src ?? ""}
-            alt=""
-            aria-hidden="true"
-            loading="lazy"
-            className="absolute inset-0 h-full w-full scale-[1.04] object-cover opacity-0 transition-opacity duration-700 group-hover:opacity-100"
-          />
+          {hover && (
+            <Image
+              src={hover.src}
+              alt=""
+              aria-hidden="true"
+              fill
+              sizes="(min-width: 1536px) 25vw, (min-width: 1024px) 33vw, (min-width: 640px) 50vw, 100vw"
+              quality={75}
+              className="scale-[1.04] object-cover opacity-0 transition-opacity duration-700 group-hover:opacity-100"
+            />
+          )}
         </Link>
         <div className="absolute top-3 left-3 flex flex-col gap-1.5 z-20">
-          {product.sale ? <Badge variant="destructive">Sale</Badge> : null}
-          {product.newArrival ? <Badge>New</Badge> : null}
-          {product.bestseller ? <Badge variant="secondary">Bestseller</Badge> : null}
+          {product.sale && (
+            <span className="bg-destructive text-destructive-foreground px-2 py-1 text-xs rounded">Sale</span>
+          )}
+          {product.newArrival && (
+            <span className="bg-primary text-primary-foreground px-2 py-1 text-xs rounded">New</span>
+          )}
+          {product.bestseller && (
+            <span className="bg-secondary text-secondary-foreground px-2 py-1 text-xs rounded">Bestseller</span>
+          )}
         </div>
 
         {/* Right Side Icons Stack - Heart & Eye */}
@@ -107,7 +114,7 @@ export function ProductCard({
         <div>
           <h3 className="font-sans text-sm font-medium tracking-tight">{product.name}</h3>
           <p className="text-muted-foreground mt-1 line-clamp-2 max-w-xs text-xs leading-relaxed">
-            {product.shortDescription}
+            {product.description}
           </p>
           <p className="text-muted-foreground mt-2 flex items-center gap-1 text-xs">
             <Star className="fill-accent text-accent h-3 w-3" aria-hidden="true" />
@@ -136,6 +143,16 @@ export function ProductGrid({
   products: Product[];
   density?: "comfortable" | "dense";
 }) {
+  if (products.length === 0) {
+    return (
+      <div className="rounded-lg border border-dashed border-border px-10 py-16 text-center">
+        <p className="text-sm font-semibold">Nothing matches those filters</p>
+        <p className="text-muted-foreground mt-1 text-sm">
+          Try widening the price range or clearing a filter.
+        </p>
+      </div>
+    );
+  }
   return (
     <div
       className={cn(

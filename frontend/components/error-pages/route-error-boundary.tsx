@@ -1,3 +1,5 @@
+"use client";
+
 import { ReactNode } from "react";
 import { ErrorBoundary } from "@/components/error-pages/error-boundary";
 import { Button } from "@/components/ui/button";

@@ -26,6 +26,12 @@ public class OrderItemConfiguration : IEntityTypeConfiguration<OrderItem>
         builder.Property(oi => oi.ColorName)
             .HasMaxLength(100);
 
+        builder.Property(oi => oi.SizeLabel)
+            .HasMaxLength(100);
+
+        builder.Property(oi => oi.Mount)
+            .HasMaxLength(20);
+
         builder.Property(oi => oi.WidthInches)
             .HasPrecision(5, 2);
 

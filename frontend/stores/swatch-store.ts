@@ -1,6 +1,6 @@
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
-import { SWATCH_LIMIT } from "@/data/content";
+import { SWATCH_LIMIT } from "@/lib/data/swatches";
 
 type SwatchState = {
   ids: string[];

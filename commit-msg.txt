@@ -1,0 +1,36 @@
+feat: full-stack auth, admin dashboard, image optimization and storefront polish
+
+Backend (.NET 9 / PostgreSQL)
+- ASP.NET Core Identity users with Admin/Customer roles, JWT access tokens (15 min)
+  and rotating SHA-256-hashed refresh tokens stored in refresh_tokens
+- Auth endpoints: register, login, refresh (rotation), logout, me
+- Admin CRUD API for products, categories, collections, rooms, needs, sizes,
+  materials, colors, inspiration stories, reviews, leads, subscribers, orders and stats
+- Order-read IDOR closed: ownership, guest session or Admin required
+- Orders link to the signed-in customer; customer "my orders" endpoint added
+- Exception filter now registered inside Serilog request logging so expected 401s
+  no longer log stack traces
+- EF migrations: InitialCreate, AddOrderShippingAddress, AddIdentityAndRefreshTokens
+- Seeds split from one monolith into per-domain files (SeedCatalog, SeedProducts,
+  SeedReviews, SeedInspiration, SeedImages, SeedSupport), idempotent on startup
+
+Frontend (Next.js 15)
+- Storefront split into app/(storefront) route group; app/(admin) hosts the new
+  admin dashboard with its own guarded shell (mobile Sheet drawer, collapsible
+  desktop icon rail with localStorage persistence)
+- Auth context with in-memory access token, HttpOnly refresh cookie, silent refresh
+  on mount, authedFetch with single retry-after-401
+- Account page with profile, roles, my orders; login/register pages
+- Admin dashboard pages: overview stats, products (full editor), categories,
+  collections, rooms, needs, sizes, materials, colors, inspiration, orders,
+  leads, reviews, subscribers
+- Mega menu rebuilt: viewport-clamped width (94vw max, centered against the
+  page container), zero horizontal overflow at all widths, short-screen scroll,
+  Esc/blur close, focus-visible, aria attributes, dead responsive variants removed
+- All raw <img> migrated to next/image with sizes/quality (AVIF/WebP via
+  /_next/image); hero priority-loaded, mega-menu image not fetched below xl
+- next.config images.qualities allow-list set (Next.js 16 requirement)
+
+NOTE: appsettings.json credentials remain in this commit because the file was
+already tracked upstream — rotate the database password, JWT secret and admin
+password and move them to user-secrets before any public deploy.

@@ -7,10 +7,17 @@ namespace Vingo.Domain.Entities.Orders;
 public class Order : BaseEntity
 {
     public string OrderNumber { get; private set; } = string.Empty;
-    public Guid UserId { get; private set; }
-    
+    public Guid? UserId { get; private set; }
+    public string? SessionId { get; private set; }
+
     public OrderStatus Status { get; private set; }
-    
+
+    public string? CustomerName { get; private set; }
+    public string? CustomerEmail { get; private set; }
+    public string? CustomerPhone { get; private set; }
+
+    public ShippingAddress? ShippingAddress { get; private set; }
+
     public Money Subtotal { get; private set; } = Money.Zero;
     public Money ShippingCost { get; private set; } = Money.Zero;
     public Money TaxAmount { get; private set; } = Money.Zero;
@@ -35,21 +42,34 @@ public class Order : BaseEntity
     private Order() { } // EF Core
 
     public static Order Create(
-        Guid userId,
+        Guid? userId,
+        string? sessionId,
         List<OrderItem> items,
         string paymentMethod,
-        string? shippingMethod = null)
+        string? shippingMethod = null,
+        string? customerName = null,
+        string? customerEmail = null,
+        string? customerPhone = null,
+        ShippingAddress? shippingAddress = null)
     {
         if (items == null || !items.Any())
             throw new DomainException("Order must have at least one item");
+
+        if (userId == null && string.IsNullOrWhiteSpace(sessionId))
+            throw new DomainException("An order requires a user or a guest session");
 
         var order = new Order
         {
             OrderNumber = GenerateOrderNumber(),
             UserId = userId,
+            SessionId = sessionId,
             Status = OrderStatus.Pending,
             PaymentMethod = paymentMethod,
-            ShippingMethod = shippingMethod ?? "standard"
+            ShippingMethod = shippingMethod ?? "standard",
+            CustomerName = customerName,
+            CustomerEmail = customerEmail,
+            CustomerPhone = customerPhone,
+            ShippingAddress = shippingAddress
         };
 
         foreach (var item in items)
@@ -65,15 +85,14 @@ public class Order : BaseEntity
 
     public void RecalculateTotals()
     {
-        Subtotal = _items.Aggregate(Money.Zero, 
+        Subtotal = _items.Aggregate(Money.Zero,
             (sum, item) => sum + item.TotalPrice);
-        
-        // Shipping calculation (simplified)
-        ShippingCost = Subtotal.Amount > 200 ? Money.Zero : new Money(15.00m);
-        
-        // Tax calculation (simplified - 8% rate)
-        TaxAmount = Subtotal * 0.08m;
-        
+
+        // Demo storefront rules (match the frontend cart): flat shipping,
+        // free over $500, no tax line. Replace with real rules at launch.
+        ShippingCost = Subtotal.Amount >= 500 ? Money.Zero : new Money(45.00m);
+        TaxAmount = Money.Zero;
+
         TotalAmount = Subtotal + ShippingCost + TaxAmount - DiscountAmount;
     }
 
@@ -94,6 +113,12 @@ public class Order : BaseEntity
         TrackingNumber = trackingNumber;
         EstimatedDeliveryDate = estimatedDelivery;
         UpdateStatus(OrderStatus.Shipped, $"Tracking number: {trackingNumber}");
+    }
+
+    public void SetInternalNotes(string? notes)
+    {
+        InternalNotes = string.IsNullOrWhiteSpace(notes) ? null : notes.Trim();
+        UpdatedAt = DateTime.UtcNow;
     }
 
     public void Cancel(string reason)

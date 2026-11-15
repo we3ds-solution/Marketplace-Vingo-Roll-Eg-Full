@@ -1,5 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
+using Vingo.Domain.Entities.Catalog;
 using Vingo.Domain.Entities.Shopping;
 
 namespace Vingo.Infrastructure.Persistence.Configurations;
@@ -24,6 +25,15 @@ public class CartItemConfiguration : IEntityTypeConfiguration<CartItem>
 
         builder.Property(ci => ci.HeightInches)
             .HasPrecision(5, 2);
+
+        // Selected options (frontend parity: slug::color=|material=|mount=inside|size=)
+        builder.Property(ci => ci.Mount)
+            .HasMaxLength(20);
+
+        builder.HasOne<Size>()
+            .WithMany()
+            .HasForeignKey(ci => ci.SizeId)
+            .OnDelete(DeleteBehavior.SetNull);
 
         // Indexes
         builder.HasIndex(ci => ci.CartId);

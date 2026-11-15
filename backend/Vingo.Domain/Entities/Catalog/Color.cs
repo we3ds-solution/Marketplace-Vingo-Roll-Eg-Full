@@ -28,4 +28,26 @@ public class Color : BaseEntity
         Family = family;
         IsActive = true;
     }
+
+    /// <summary>Full admin edit.</summary>
+    public void UpdateDetails(
+        string name,
+        string hexCode,
+        string? family,
+        int sortOrder,
+        bool isActive)
+    {
+        if (string.IsNullOrWhiteSpace(name))
+            throw new DomainException("Color name is required");
+
+        if (string.IsNullOrWhiteSpace(hexCode))
+            throw new DomainException("Hex code is required");
+
+        Name = name.Trim();
+        HexCode = hexCode.StartsWith('#') ? hexCode.Trim() : $"#{hexCode.Trim()}";
+        Family = family;
+        SortOrder = sortOrder;
+        IsActive = isActive;
+        UpdatedAt = DateTime.UtcNow;
+    }
 }

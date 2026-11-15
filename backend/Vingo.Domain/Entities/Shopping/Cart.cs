@@ -27,10 +27,12 @@ public class Cart : BaseEntity
 
     public void AddItem(CartItem item)
     {
-        var existing = _items.FirstOrDefault(i => 
+        var existing = _items.FirstOrDefault(i =>
             i.ProductId == item.ProductId &&
             i.MaterialId == item.MaterialId &&
-            i.ColorId == item.ColorId);
+            i.ColorId == item.ColorId &&
+            i.SizeId == item.SizeId &&
+            i.Mount == item.Mount);
 
         if (existing != null)
         {

@@ -19,9 +19,6 @@ export type {
 // Category & Collection types
 export type { Category, Collection, Room, Need } from "./category";
 
-// Cart types
-export type { CartItem, CartState } from "./cart";
-
 // Swatch types
 export type { Swatch, SwatchState } from "./swatch";
 
@@ -31,36 +28,9 @@ export type { InspirationPost, WishlistItem, WishlistState } from "./inspiration
 // Service types
 export type { Service, ConsultationBooking, FAQ } from "./service";
 
-// Common types (Auth, Order, Filters)
-export type {
-  User,
-  UserPreferences,
-  SignupData,
-  LoginData,
-  AuthContextValue,
-  Address,
-  Order,
-  OrderStatus,
-  ShippingMethod,
-  FilterState,
-} from "./common";
+// Filter types
+export type { FilterState } from "./filters";
 
-export {
-  MOCK_USERS,
-  SHIPPING_METHODS,
-  US_STATES,
-  STATE_TAX_RATES,
-  calculateShipping,
-  calculateTax,
-  generateOrderId,
-  getEstimatedDelivery,
-  FILTER_DEFAULTS,
-  SORT_OPTIONS,
-  MATERIAL_TIERS,
-  LIGHT_CONTROLS,
-  STYLES,
-  ROOM_TYPES,
-  COLLECTIONS_LIST,
-} from "./common";
+export { FILTER_DEFAULTS, SORT_OPTIONS, MATERIAL_TIERS, LIGHT_CONTROLS, STYLES, ROOM_TYPES, COLLECTIONS_LIST } from "./filters";
 
 export { SERVICE_TOPICS } from "./service";

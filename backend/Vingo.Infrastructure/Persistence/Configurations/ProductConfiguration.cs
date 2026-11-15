@@ -85,6 +85,28 @@ public class ProductConfiguration : IEntityTypeConfiguration<Product>
         builder.Property(p => p.IsOnSale)
             .HasDefaultValue(false);
 
+        // Merchandising attributes
+        builder.Property(p => p.Styles)
+            .HasColumnType("text[]");
+
+        builder.Property(p => p.FeaturesJson)
+            .HasColumnType("jsonb")
+            .IsRequired();
+
+        builder.Property(p => p.SpecificationsJson)
+            .HasColumnType("jsonb");
+
+        builder.Property(p => p.Installation)
+            .HasMaxLength(20)
+            .HasDefaultValue("both");
+
+        builder.Property(p => p.StockStatus)
+            .HasMaxLength(20)
+            .HasDefaultValue("in-stock");
+
+        builder.Property(p => p.Motorized)
+            .HasDefaultValue(false);
+
         // Relationships
         builder.HasOne(p => p.Category)
             .WithMany(c => c.Products)
@@ -123,6 +145,39 @@ public class ProductConfiguration : IEntityTypeConfiguration<Product>
                 j => j.HasOne<Product>().WithMany().HasForeignKey("product_id"),
                 j => j.Property<int>("sort_order").HasDefaultValue(0)
             );
+
+        // Many-to-many with Sizes
+        builder.HasMany(p => p.Sizes)
+            .WithMany(s => s.Products)
+            .UsingEntity<Dictionary<string, object>>(
+                "product_sizes",
+                j => j.HasOne<Size>().WithMany().HasForeignKey("size_id"),
+                j => j.HasOne<Product>().WithMany().HasForeignKey("product_id")
+            );
+
+        // Many-to-many with Rooms
+        builder.HasMany(p => p.Rooms)
+            .WithMany(r => r.Products)
+            .UsingEntity<Dictionary<string, object>>(
+                "product_rooms",
+                j => j.HasOne<Room>().WithMany().HasForeignKey("room_id"),
+                j => j.HasOne<Product>().WithMany().HasForeignKey("product_id")
+            );
+
+        // Many-to-many with Needs
+        builder.HasMany(p => p.Needs)
+            .WithMany(n => n.Products)
+            .UsingEntity<Dictionary<string, object>>(
+                "product_needs",
+                j => j.HasOne<Need>().WithMany().HasForeignKey("need_id"),
+                j => j.HasOne<Product>().WithMany().HasForeignKey("product_id")
+            );
+
+        // Reviews
+        builder.HasMany(p => p.Reviews)
+            .WithOne(r => r.Product)
+            .HasForeignKey(r => r.ProductId)
+            .OnDelete(DeleteBehavior.Cascade);
 
         // Indexes
         builder.HasIndex(p => p.CategoryId);

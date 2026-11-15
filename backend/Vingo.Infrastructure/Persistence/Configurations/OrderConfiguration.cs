@@ -23,12 +23,54 @@ public class OrderConfiguration : IEntityTypeConfiguration<Order>
             .HasConversion<string>()
             .HasMaxLength(50);
 
+        // Guest sessions and customer details
+        builder.Property(o => o.SessionId)
+            .HasMaxLength(255);
+
+        builder.Property(o => o.CustomerName)
+            .HasMaxLength(120);
+
+        builder.Property(o => o.CustomerEmail)
+            .HasMaxLength(200);
+
+        builder.Property(o => o.CustomerPhone)
+            .HasMaxLength(40);
+
         // Money value objects
         builder.OwnsOne(o => o.Subtotal, ConfigureMoney("subtotal"));
         builder.OwnsOne(o => o.ShippingCost, ConfigureMoney("shipping_cost"));
         builder.OwnsOne(o => o.TaxAmount, ConfigureMoney("tax_amount"));
         builder.OwnsOne(o => o.DiscountAmount, ConfigureMoney("discount_amount"));
         builder.OwnsOne(o => o.TotalAmount, ConfigureMoney("total_amount"));
+
+        // Shipping address value object
+        builder.OwnsOne(o => o.ShippingAddress, address =>
+        {
+            address.Property(a => a.Line1)
+                .HasColumnName("shipping_line1")
+                .HasMaxLength(200);
+
+            address.Property(a => a.Line2)
+                .HasColumnName("shipping_line2")
+                .HasMaxLength(200);
+
+            address.Property(a => a.City)
+                .HasColumnName("shipping_city")
+                .HasMaxLength(100);
+
+            address.Property(a => a.State)
+                .HasColumnName("shipping_state")
+                .HasMaxLength(50);
+
+            address.Property(a => a.PostalCode)
+                .HasColumnName("shipping_postal_code")
+                .HasMaxLength(20);
+
+            address.Property(a => a.Country)
+                .HasColumnName("shipping_country")
+                .HasMaxLength(2)
+                .HasDefaultValue("US");
+        });
 
         builder.Property(o => o.ShippingMethod)
             .HasMaxLength(50);
@@ -65,7 +107,7 @@ public class OrderConfiguration : IEntityTypeConfiguration<Order>
         builder.Ignore(o => o.DomainEvents);
     }
 
-    private static Action<EntityFrameworkCore.Metadata.Builders.OwnedNavigationBuilder<Order, Domain.ValueObjects.Money>> ConfigureMoney(string columnPrefix)
+    private static Action<Microsoft.EntityFrameworkCore.Metadata.Builders.OwnedNavigationBuilder<Order, Domain.ValueObjects.Money>> ConfigureMoney(string columnPrefix)
     {
         return money =>
         {

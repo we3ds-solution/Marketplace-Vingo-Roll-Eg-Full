@@ -13,9 +13,11 @@ public class OrderItem : BaseEntity
     public string ProductSlug { get; private set; } = string.Empty;
     public string? MaterialName { get; private set; }
     public string? ColorName { get; private set; }
+    public string? SizeLabel { get; private set; }
+    public string? Mount { get; private set; }
     public decimal? WidthInches { get; private set; }
     public decimal? HeightInches { get; private set; }
-    
+
     public int Quantity { get; private set; }
     public Money UnitPrice { get; private set; } = Money.Zero;
     public Money TotalPrice { get; private set; } = Money.Zero;
@@ -30,6 +32,8 @@ public class OrderItem : BaseEntity
         Money unitPrice,
         string? materialName = null,
         string? colorName = null,
+        string? sizeLabel = null,
+        string? mount = null,
         decimal? widthInches = null,
         decimal? heightInches = null)
     {
@@ -43,9 +47,11 @@ public class OrderItem : BaseEntity
         UnitPrice = unitPrice;
         MaterialName = materialName;
         ColorName = colorName;
+        SizeLabel = sizeLabel;
+        Mount = mount;
         WidthInches = widthInches;
         HeightInches = heightInches;
-        
+
         TotalPrice = unitPrice * quantity;
     }
 }

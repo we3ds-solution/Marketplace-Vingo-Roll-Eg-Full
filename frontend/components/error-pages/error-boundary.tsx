@@ -1,3 +1,5 @@
+"use client";
+
 import { Component, type ReactNode, type ErrorInfo } from "react";
 import { ChevronDown, RotateCw } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -117,7 +119,7 @@ function ErrorBoundaryFallback({
   isDetailsExpanded,
   onToggleDetails,
 }: ErrorBoundaryFallbackProps) {
-  const isDev = import.meta.env.DEV;
+  const isDev = process.env.NODE_ENV === "development";
 
   return (
     <div className="relative w-full min-h-screen bg-background text-foreground overflow-hidden flex flex-col">

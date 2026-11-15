@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.OutputCaching;
 using Vingo.Application.Features.Catalog.Queries.GetCategories;
 
 namespace Vingo.WebAPI.Controllers;
@@ -16,9 +17,10 @@ public class CategoriesController : ControllerBase
     }
 
     /// <summary>
-    /// Get all categories
+    /// Get all categories with product counts
     /// </summary>
     [HttpGet]
+    [OutputCache(Duration = 300)]
     [ProducesResponseType(typeof(List<CategoryDto>), StatusCodes.Status200OK)]
     public async Task<IActionResult> GetCategories(CancellationToken cancellationToken)
     {

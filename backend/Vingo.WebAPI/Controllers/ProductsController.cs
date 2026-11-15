@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
 using Vingo.Application.Features.Catalog.Queries.GetProducts;
+using Vingo.Application.Features.Catalog.Queries.GetProductBySlug;
 
 namespace Vingo.WebAPI.Controllers;
 
@@ -9,59 +10,81 @@ namespace Vingo.WebAPI.Controllers;
 public class ProductsController : ControllerBase
 {
     private readonly GetProductsHandler _getProductsHandler;
+    private readonly GetProductBySlugHandler _getProductBySlugHandler;
     private readonly ILogger<ProductsController> _logger;
 
     public ProductsController(
         GetProductsHandler getProductsHandler,
+        GetProductBySlugHandler getProductBySlugHandler,
         ILogger<ProductsController> logger)
     {
         _getProductsHandler = getProductsHandler;
+        _getProductBySlugHandler = getProductBySlugHandler;
         _logger = logger;
     }
 
     /// <summary>
-    /// Get paginated list of products
+    /// Get a paginated list of products with filters
     /// </summary>
     [HttpGet]
     [ProducesResponseType(typeof(PaginatedResult<ProductDto>), StatusCodes.Status200OK)]
     public async Task<IActionResult> GetProducts(
         [FromQuery] int page = 1,
-        [FromQuery] int pageSize = 20,
+        [FromQuery] int pageSize = 12,
         [FromQuery] string? category = null,
+        [FromQuery] string? collection = null,
+        [FromQuery] string? room = null,
+        [FromQuery] string? need = null,
         [FromQuery] string? search = null,
-        [FromQuery] bool? featured = null,
-        [FromQuery] bool? bestseller = null,
+        [FromQuery] string? lightControl = null,
+        [FromQuery] string? materialTier = null,
+        [FromQuery] string? style = null,
+        [FromQuery] decimal? minPrice = null,
+        [FromQuery] decimal? maxPrice = null,
+        [FromQuery] bool? isFeatured = null,
+        [FromQuery] bool? isBestseller = null,
+        [FromQuery] bool? isOnSale = null,
+        [FromQuery] string? sort = null,
         CancellationToken cancellationToken = default)
     {
-        var query = new GetProductsQuery(page, pageSize, category, search, featured, bestseller);
+        var query = new GetProductsQuery(
+            page,
+            pageSize,
+            category,
+            collection,
+            room,
+            need,
+            search,
+            lightControl,
+            materialTier,
+            style,
+            minPrice,
+            maxPrice,
+            isFeatured,
+            isBestseller,
+            isOnSale,
+            sort);
+
         var result = await _getProductsHandler.Handle(query, cancellationToken);
-        
         return Ok(result);
     }
 
     /// <summary>
-    /// Get featured products
+    /// Get full product detail by slug (options, images, reviews, related products)
     /// </summary>
-    [HttpGet("featured")]
-    [ProducesResponseType(typeof(PaginatedResult<ProductDto>), StatusCodes.Status200OK)]
-    public async Task<IActionResult> GetFeaturedProducts(CancellationToken cancellationToken)
+    [HttpGet("{slug}")]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    public async Task<IActionResult> GetProductBySlug(
+        string slug,
+        CancellationToken cancellationToken)
     {
-        var query = new GetProductsQuery(Page: 1, PageSize: 12, IsFeatured: true);
-        var result = await _getProductsHandler.Handle(query, cancellationToken);
-        
-        return Ok(result);
-    }
+        var product = await _getProductBySlugHandler.Handle(slug, cancellationToken);
 
-    /// <summary>
-    /// Get bestseller products
-    /// </summary>
-    [HttpGet("bestsellers")]
-    [ProducesResponseType(typeof(PaginatedResult<ProductDto>), StatusCodes.Status200OK)]
-    public async Task<IActionResult> GetBestsellers(CancellationToken cancellationToken)
-    {
-        var query = new GetProductsQuery(Page: 1, PageSize: 12, IsBestseller: true);
-        var result = await _getProductsHandler.Handle(query, cancellationToken);
-        
-        return Ok(result);
+        if (product == null)
+        {
+            return NotFound(new { error = "Product not found" });
+        }
+
+        return Ok(product);
     }
 }

@@ -1,4 +1,4 @@
-import { IMG } from "./categories";
+import { IMG } from "../images";
 import type { Swatch } from "@/types";
 
 const materialsList = [

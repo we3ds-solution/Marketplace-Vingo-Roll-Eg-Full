@@ -23,6 +23,12 @@ public class CategoryConfiguration : IEntityTypeConfiguration<Category>
         builder.HasIndex(c => c.Slug)
             .IsUnique();
 
+        builder.Property(c => c.Tagline)
+            .HasMaxLength(200);
+
+        builder.Property(c => c.Group)
+            .HasMaxLength(100);
+
         builder.Property(c => c.Description)
             .HasMaxLength(1000);
 

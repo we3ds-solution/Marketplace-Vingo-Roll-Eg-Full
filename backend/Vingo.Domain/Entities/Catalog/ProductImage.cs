@@ -20,4 +20,9 @@ public class ProductImage : BaseEntity
         SortOrder = sortOrder;
         IsPrimary = isPrimary;
     }
+
+    public void SetPrimary(bool isPrimary)
+    {
+        IsPrimary = isPrimary;
+    }
 }

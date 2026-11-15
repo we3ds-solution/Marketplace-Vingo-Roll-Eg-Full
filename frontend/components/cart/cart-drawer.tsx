@@ -1,11 +1,13 @@
-import { useState } from "react";
+"use client";
+
+import { useEffect, useState } from "react";
 import Link from "next/link";
+import Image from "next/image";
 import { ShoppingBag, Minus, Plus, Trash2 } from "lucide-react";
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
 import { Button } from "@/components/ui/button";
-import { useCartStore, cartSubtotal, cartCount } from "@/store/cart-store";
-import { useHydrated } from "@/hooks/use-hydrated";
-import { formatPrice } from "@/lib/formatters";
+import { useCartStore, cartSubtotal, cartCount } from "@/stores/cart-store";
+import { formatPrice } from "@/lib/utils";
 import { cn } from "@/lib/utils";
 
 /**
@@ -18,8 +20,13 @@ export function CartDrawer() {
   const setQuantity = useCartStore((s) => s.setQuantity);
   const remove = useCartStore((s) => s.remove);
   const clear = useCartStore((s) => s.clear);
-  const hydrated = useHydrated();
+  const refresh = useCartStore((s) => s.refresh);
+  const hydrated = useCartStore((s) => s.hydrated);
   const [open, setOpen] = useState(false);
+
+  useEffect(() => {
+    void refresh();
+  }, [refresh]);
 
   const subtotal = cartSubtotal(items);
   const shipping = subtotal > 500 || subtotal === 0 ? 0 : 45;
@@ -73,14 +80,14 @@ export function CartDrawer() {
                 {items.map((item) => (
                   <li key={item.key} className="flex gap-4">
                     {/* Item Image */}
-                    <img
+                    <Image
                       src={item.image}
                       alt=""
                       aria-hidden="true"
                       width={80}
                       height={100}
-                      loading="lazy"
-                      className="bg-muted h-24 w-20 rounded-sm object-cover flex-shrink-0"
+                      quality={60}
+                      className="bg-muted h-24 w-20 flex-shrink-0 rounded-sm object-cover"
                     />
 
                     {/* Item Details */}

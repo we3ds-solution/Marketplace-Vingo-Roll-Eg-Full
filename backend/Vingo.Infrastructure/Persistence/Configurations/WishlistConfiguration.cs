@@ -12,9 +12,15 @@ public class WishlistConfiguration : IEntityTypeConfiguration<Wishlist>
 
         builder.HasKey(w => w.Id);
 
-        // One wishlist per user
+        // One wishlist per user (nullable for guests)
         builder.HasIndex(w => w.UserId)
-            .IsUnique();
+            .IsUnique()
+            .HasFilter("user_id IS NOT NULL");
+
+        // One wishlist per guest session (nullable for signed-in users)
+        builder.HasIndex(w => w.SessionId)
+            .IsUnique()
+            .HasFilter("session_id IS NOT NULL");
 
         // Relationships
         builder.HasMany(w => w.Items)

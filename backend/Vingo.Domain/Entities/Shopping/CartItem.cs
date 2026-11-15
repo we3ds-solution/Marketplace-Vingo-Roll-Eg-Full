@@ -6,12 +6,14 @@ public class CartItem : BaseEntity
 {
     public Guid CartId { get; private set; }
     public Guid ProductId { get; private set; }
-    
+
     public Guid? MaterialId { get; private set; }
     public Guid? ColorId { get; private set; }
+    public Guid? SizeId { get; private set; }
+    public string? Mount { get; private set; }
     public decimal? WidthInches { get; private set; }
     public decimal? HeightInches { get; private set; }
-    
+
     public int Quantity { get; private set; }
     public decimal UnitPrice { get; private set; }
 
@@ -24,6 +26,8 @@ public class CartItem : BaseEntity
         decimal unitPrice,
         Guid? materialId = null,
         Guid? colorId = null,
+        Guid? sizeId = null,
+        string? mount = null,
         decimal? widthInches = null,
         decimal? heightInches = null)
     {
@@ -33,12 +37,17 @@ public class CartItem : BaseEntity
         if (unitPrice < 0)
             throw new DomainException("Unit price cannot be negative");
 
+        if (mount != null && mount != "inside" && mount != "outside")
+            throw new DomainException("Mount must be 'inside' or 'outside'");
+
         CartId = cartId;
         ProductId = productId;
         Quantity = quantity;
         UnitPrice = unitPrice;
         MaterialId = materialId;
         ColorId = colorId;
+        SizeId = sizeId;
+        Mount = mount;
         WidthInches = widthInches;
         HeightInches = heightInches;
     }
