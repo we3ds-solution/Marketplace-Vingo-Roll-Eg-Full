@@ -19,6 +19,7 @@ WebAPI (HTTP Endpoints)
 ## 📦 Projects
 
 ### Vingo.Domain
+
 **Pure business logic - No dependencies**
 
 - **Entities**: Product, Category, Material, Color, Cart, Order, etc.
@@ -27,6 +28,7 @@ WebAPI (HTTP Endpoints)
 - **Business Rules**: Pricing, validation, workflow logic
 
 ### Vingo.Application
+
 **Use cases and application business rules**
 
 - CQRS structure (Commands/Queries/Handlers)
@@ -35,6 +37,7 @@ WebAPI (HTTP Endpoints)
 - Service interfaces
 
 ### Vingo.Infrastructure
+
 **External concerns implementation**
 
 - **Database**: EF Core + PostgreSQL
@@ -43,6 +46,7 @@ WebAPI (HTTP Endpoints)
 - **Services**: Email, file storage, caching
 
 ### Vingo.WebAPI
+
 **HTTP entry point**
 
 - Controllers (RESTful APIs)
@@ -58,6 +62,7 @@ WebAPI (HTTP Endpoints)
 **Connection**: `db80065.public.databaseasp.net`
 
 ### Schema Overview
+
 - **13 core tables**: Products, Categories, Orders, Cart, etc.
 - **3 junction tables**: Product relationships (materials, colors, collections)
 - **Indexes**: Optimized for common queries
@@ -66,6 +71,7 @@ WebAPI (HTTP Endpoints)
 ## 🚀 Getting Started
 
 ### Prerequisites
+
 - .NET 9.0 SDK
 - PostgreSQL (or use remote connection)
 - dotnet-ef tools (for migrations)
@@ -123,17 +129,20 @@ dotnet test tests/Vingo.ArchitectureTests
 ## 🔧 Database Migrations
 
 ### Create Migration
+
 ```bash
 cd Vingo.Infrastructure
 dotnet ef migrations add MigrationName --startup-project ../Vingo.WebAPI
 ```
 
 ### Apply Migration
+
 ```bash
 dotnet ef database update --startup-project ../Vingo.WebAPI
 ```
 
 ### View Migration Status
+
 ```bash
 dotnet ef migrations list --startup-project ../Vingo.WebAPI
 ```
@@ -174,6 +183,7 @@ export CorsSettings__AllowedOrigins__0="http://localhost:3000"
 ## 🛡️ Security
 
 ### Implemented
+
 - ✅ Server-side price recalculation (never trust client)
 - ✅ Order product snapshots (audit trail)
 - ✅ Quantity validation (1-20 per item)
@@ -182,6 +192,7 @@ export CorsSettings__AllowedOrigins__0="http://localhost:3000"
 - ✅ CORS configuration
 
 ### To Implement (Phase 3)
+
 - [ ] JWT authentication
 - [ ] Role-based authorization
 - [ ] Rate limiting
@@ -192,6 +203,7 @@ export CorsSettings__AllowedOrigins__0="http://localhost:3000"
 ## 🎯 API Endpoints (Current)
 
 ### Health & Status
+
 ```
 GET  /health                    → ASP.NET health check
 GET  /api/v1/health            → API status
@@ -199,6 +211,7 @@ GET  /api/v1/health/db         → Database connectivity
 ```
 
 ### Coming in Phase 3
+
 ```
 # Authentication
 POST /api/v1/auth/register
@@ -234,16 +247,19 @@ GET  /api/v1/orders/{id}
 ## 📚 Business Logic Highlights
 
 ### Product Pricing
+
 ```csharp
 finalPrice = basePrice + materialDelta + sizeDelta
 ```
 
 ### Cart Workflow
+
 ```
 Guest Cart (session) → Login → Merge with User Cart
 ```
 
 ### Order Creation
+
 ```
 1. Validate cart items
 2. Recalculate all prices (server-side)
@@ -255,6 +271,7 @@ Guest Cart (session) → Login → Merge with User Cart
 ```
 
 ### Status Transitions
+
 ```
 Pending → Confirmed → Processing → Shipped → Delivered
                     ↓
@@ -264,6 +281,7 @@ Pending → Confirmed → Processing → Shipped → Delivered
 ## 🧩 Domain Entities
 
 ### Catalog
+
 - `Product` - Main product with variants and pricing
 - `Category` - Hierarchical product categories
 - `Material` - Fabric options with price deltas
@@ -272,12 +290,14 @@ Pending → Confirmed → Processing → Shipped → Delivered
 - `ProductImage` - Product gallery images
 
 ### Shopping
+
 - `Cart` - Guest and authenticated shopping carts
 - `CartItem` - Line items with options
 - `Wishlist` - Saved products per user
 - `WishlistItem` - Wishlist entries
 
 ### Orders
+
 - `Order` - Customer orders with pricing breakdown
 - `OrderItem` - Order line items (product snapshots)
 - `OrderStatusHistory` - Audit trail for status changes
@@ -285,21 +305,25 @@ Pending → Confirmed → Processing → Shipped → Delivered
 ## 📦 NuGet Packages
 
 ### Core
+
 - `Npgsql.EntityFrameworkCore.PostgreSQL` 9.0.2
 - `Microsoft.EntityFrameworkCore.Design` 9.0.0
 - `Microsoft.AspNetCore.Identity.EntityFrameworkCore` 11.0.0
 
 ### Application
+
 - `FluentValidation` + DI Extensions
 - `Mapster` (object mapping)
 
 ### WebAPI
+
 - `Serilog.AspNetCore` + Console sink
 - `Scalar.AspNetCore` (API docs)
 - `Microsoft.AspNetCore.Authentication.JwtBearer`
 - `AspNetCore.HealthChecks.NpgSql`
 
 ### Testing
+
 - `xUnit`
 - `NSubstitute` (mocking)
 - `Shouldly` (assertions)
@@ -308,6 +332,7 @@ Pending → Confirmed → Processing → Shipped → Delivered
 ## 🔍 Code Quality
 
 ### Static Analysis
+
 ```bash
 # Run code analysis
 dotnet build /p:TreatWarningsAsErrors=true
@@ -317,6 +342,7 @@ dotnet format
 ```
 
 ### Architecture Tests
+
 ```bash
 # Verify Clean Architecture rules
 dotnet test tests/Vingo.ArchitectureTests
@@ -325,12 +351,14 @@ dotnet test tests/Vingo.ArchitectureTests
 ## 📈 Performance
 
 ### Implemented
+
 - ✅ Connection pooling (EF Core default)
 - ✅ AsNoTracking for read-only queries
 - ✅ Indexes on frequently queried fields
 - ✅ Eager loading for related entities
 
 ### To Implement
+
 - [ ] Response caching
 - [ ] Redis distributed cache
 - [ ] Database query optimization
@@ -339,6 +367,7 @@ dotnet test tests/Vingo.ArchitectureTests
 ## 🐳 Docker Support
 
 ### Dockerfile (coming soon)
+
 ```dockerfile
 FROM mcr.microsoft.com/dotnet/aspnet:9.0 AS base
 FROM mcr.microsoft.com/dotnet/sdk:9.0 AS build
@@ -346,6 +375,7 @@ FROM mcr.microsoft.com/dotnet/sdk:9.0 AS build
 ```
 
 ### Docker Compose
+
 ```yaml
 services:
   api:
@@ -359,6 +389,7 @@ services:
 ## 🚀 Deployment
 
 ### Production Checklist
+
 - [ ] Update connection string
 - [ ] Set secure JWT secret
 - [ ] Configure CORS for production origin
@@ -371,7 +402,7 @@ services:
 ## 📞 Support
 
 **Developer**: we3ds-company  
-**Email**: we3ds.solution@gmail.com  
+**Email**: we3ds.solution@gmail.com
 
 ## 📄 License
 

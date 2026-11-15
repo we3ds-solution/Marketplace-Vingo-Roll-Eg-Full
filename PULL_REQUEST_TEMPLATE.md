@@ -1,26 +1,30 @@
 # Pull Request: Phase 2 - Backend Foundation Complete
 
 ## 📋 Summary
+
 This PR implements the **Backend Foundation** for the Vingo Roll migration from TanStack Start to Next.js + ASP.NET Core Clean Architecture.
 
 **Author**: we3ds-company (we3ds.solution@gmail.com)  
 **Phase**: 2 of 7  
-**Status**: Ready for Review  
+**Status**: Ready for Review
 
 ---
 
 ## 🎯 Objectives Completed
 
 ### ✅ Project Structure
+
 - Created ASP.NET Core solution with Clean Architecture
 - Set up 4 core projects: Domain, Application, Infrastructure, WebAPI
 - Added 3 test projects: Unit, Integration, Architecture tests
 - Configured all project dependencies following Clean Architecture rules
 
 ### ✅ Domain Layer (100%)
+
 **Entities Created**: 13 core entities with full business logic
 
 #### Catalog Domain
+
 - `Product` - Full product entity with pricing, variants, collections
 - `Category` - Hierarchical categories with parent/child support
 - `Material` - Material options with tier-based pricing deltas
@@ -29,23 +33,28 @@ This PR implements the **Backend Foundation** for the Vingo Roll migration from 
 - `ProductImage` - Product gallery management
 
 #### Shopping Domain
+
 - `Cart` - Guest and authenticated cart with merge support
 - `CartItem` - Line items with quantity validation (1-20)
 - `Wishlist` - User-specific saved products
 - `WishlistItem` - Wishlist entries
 
 #### Orders Domain
+
 - `Order` - Full order entity with status tracking
 - `OrderItem` - Order line items with product snapshots
 - `OrderStatusHistory` - Audit trail for order status changes
 
 **Value Objects & Enums**:
+
 - `Money` - Immutable value object with currency support
 - `LightControlType`, `MaterialTier`, `OrderStatus` enums
 - `BaseEntity`, `DomainException`, `IDomainEvent` foundation
 
 ### ✅ Infrastructure Layer (90%)
+
 **Database Configuration**:
+
 - `VingoDbContext` - EF Core context with automatic timestamps
 - **13 Entity Configurations** using Fluent API:
   - ProductConfiguration (with Money value objects, indexes)
@@ -60,6 +69,7 @@ This PR implements the **Backend Foundation** for the Vingo Roll migration from 
   - OrderStatusHistoryConfiguration
 
 **Database Features**:
+
 - PostgreSQL connection configured
 - Many-to-many relationships (Product ↔ Materials, Colors, Collections)
 - Proper indexes on slugs, foreign keys, status fields
@@ -67,7 +77,9 @@ This PR implements the **Backend Foundation** for the Vingo Roll migration from 
 - Unique constraints on slugs, user carts, wishlists
 
 ### ✅ WebAPI Layer (Foundation)
+
 **Configuration**:
+
 - Serilog structured logging
 - PostgreSQL connection: `db80065.public.databaseasp.net`
 - CORS configured for frontend origins
@@ -75,6 +87,7 @@ This PR implements the **Backend Foundation** for the Vingo Roll migration from 
 - Health checks for database monitoring
 
 **Endpoints Created**:
+
 - `GET /api/v1/health` - Basic health check
 - `GET /api/v1/health/db` - Database connectivity + migration status
 - `GET /health` - ASP.NET health check endpoint
@@ -84,7 +97,9 @@ This PR implements the **Backend Foundation** for the Vingo Roll migration from 
 ## 🏗️ Architecture Decisions
 
 ### Clean Architecture Principles
+
 ✅ **Dependency Rule Enforced**:
+
 ```
 Domain (no dependencies)
   ↑
@@ -96,12 +111,14 @@ WebAPI (orchestrates all layers)
 ```
 
 ### Design Patterns Used
+
 - **Value Objects**: Money for immutable price handling
 - **Domain Events**: Infrastructure ready (events in BaseEntity)
 - **Repository Pattern**: Ready for implementation in Application layer
 - **CQRS**: Structure prepared for Commands/Queries
 
 ### Security Measures
+
 - ✅ Server-side price recalculation (never trust client prices)
 - ✅ Order snapshots (product details frozen at purchase time)
 - ✅ Quantity validation (1-20 per cart item)
@@ -113,19 +130,23 @@ WebAPI (orchestrates all layers)
 ## 📊 Business Logic Implemented
 
 ### Product Pricing
+
 ```csharp
 finalPrice = basePrice + materialDelta + sizeDelta
 ```
+
 - Material tiers: Essential → Signature → Couture
 - Dynamic price calculation based on selected options
 
 ### Cart Management
+
 - **Guest Carts**: Session-based for anonymous users
 - **User Carts**: Persistent, one per user
 - **Cart Merge**: Guest cart → User cart on login
 - **Deduplication**: Same product + options = quantity increase
 
 ### Order Workflow
+
 - ✅ Order number generation: `ORD-YYYYMMDD-XXXXX`
 - ✅ Status transitions with history
 - ✅ Shipping calculation: Free shipping > $200
@@ -137,15 +158,19 @@ finalPrice = basePrice + materialDelta + sizeDelta
 ## 🗄️ Database Schema
 
 ### PostgreSQL Tables Created
+
 **13 Core Tables**:
+
 - `products`, `categories`, `materials`, `colors`, `collections`, `product_images`
 - `carts`, `cart_items`, `wishlists`, `wishlist_items`
 - `orders`, `order_items`, `order_status_history`
 
 **Junction Tables** (Many-to-Many):
+
 - `product_materials`, `product_colors`, `product_collections`
 
 ### Key Relationships
+
 ```
 User 1→1 Cart
 User 1→1 Wishlist
@@ -167,15 +192,18 @@ Cart 1→∞ CartItems
 ## 📦 NuGet Packages Added
 
 ### Infrastructure
+
 - `Npgsql.EntityFrameworkCore.PostgreSQL` 9.0.2
 - `Microsoft.EntityFrameworkCore.Design` 9.0.0
 - `Microsoft.AspNetCore.Identity.EntityFrameworkCore` 11.0.0
 
 ### Application (prepared for next phase)
+
 - `FluentValidation` + DI Extensions
 - `Mapster` (object mapping)
 
 ### WebAPI
+
 - `Serilog.AspNetCore` + Console sink
 - `Scalar.AspNetCore` (API documentation)
 - `Microsoft.AspNetCore.Authentication.JwtBearer`
@@ -186,6 +214,7 @@ Cart 1→∞ CartItems
 ## 🧪 Testing Strategy (Ready)
 
 ### Test Projects Created
+
 ```
 tests/
 ├── Vingo.UnitTests/         # Domain + Application logic
@@ -200,12 +229,14 @@ tests/
 ## 🚀 What's Next (Phase 3)
 
 ### Application Layer
+
 - [ ] CQRS handlers (Commands/Queries)
 - [ ] DTOs and mapping profiles (Mapster)
 - [ ] FluentValidation validators
 - [ ] Service interfaces (IApplicationDbContext)
 
 ### WebAPI Controllers
+
 - [ ] AuthController (Register, Login, Refresh)
 - [ ] ProductsController (List, Detail, Search)
 - [ ] CategoriesController (List, Tree)
@@ -213,6 +244,7 @@ tests/
 - [ ] OrdersController (Create, List, Detail)
 
 ### Database Migration
+
 - [ ] Create initial EF Core migration
 - [ ] Seed data from mock files (`src/data/*.ts`)
 - [ ] Apply migration to PostgreSQL
@@ -223,6 +255,7 @@ tests/
 ## 📝 Files Changed
 
 ### New Files (50+)
+
 ```
 backend/
 ├── Vingo.Domain/              (25 files)
@@ -259,6 +292,7 @@ PULL_REQUEST_TEMPLATE.md       (This file)
 ## ✅ Checklist for Reviewers
 
 ### Code Quality
+
 - [ ] All entities follow Domain-Driven Design principles
 - [ ] Business logic is in Domain layer (not leaking to Infrastructure)
 - [ ] EF Core configurations use Fluent API (no data annotations)
@@ -267,12 +301,14 @@ PULL_REQUEST_TEMPLATE.md       (This file)
 - [ ] Immutability where appropriate (value objects)
 
 ### Architecture
+
 - [ ] Clean Architecture dependency rules respected
 - [ ] No circular dependencies
 - [ ] Infrastructure implements Domain abstractions
 - [ ] WebAPI doesn't reference Domain directly
 
 ### Database
+
 - [ ] Connection string configured correctly
 - [ ] All entity configurations present
 - [ ] Indexes on frequently queried fields
@@ -280,12 +316,14 @@ PULL_REQUEST_TEMPLATE.md       (This file)
 - [ ] Proper cascade delete rules
 
 ### Security
+
 - [ ] Passwords not hardcoded (except connection string for now)
 - [ ] Input validation in domain entities
 - [ ] SSL mode enabled for PostgreSQL
 - [ ] CORS configured properly
 
 ### Documentation
+
 - [ ] Architecture documented clearly
 - [ ] Database schema explained
 - [ ] Migration plan is realistic
@@ -298,6 +336,7 @@ PULL_REQUEST_TEMPLATE.md       (This file)
 None currently. Code is production-ready for Phase 2 scope.
 
 **Future Improvements**:
+
 - Add MediatR for CQRS (Phase 3)
 - Implement repository pattern (Phase 3)
 - Add JWT authentication (Phase 3)
@@ -307,17 +346,17 @@ None currently. Code is production-ready for Phase 2 scope.
 
 ## 📊 Progress Metrics
 
-| Metric | Value |
-|--------|-------|
-| Files Created | 50+ |
-| Entities Implemented | 13 |
-| Entity Configurations | 13 |
-| Lines of Code (Domain) | ~1,200 |
-| Lines of Code (Infrastructure) | ~800 |
-| Test Projects Ready | 3 |
-| Documentation Pages | 3 |
-| Overall Phase 2 Progress | 90% |
-| **Total Project Progress** | **25%** |
+| Metric                         | Value   |
+| ------------------------------ | ------- |
+| Files Created                  | 50+     |
+| Entities Implemented           | 13      |
+| Entity Configurations          | 13      |
+| Lines of Code (Domain)         | ~1,200  |
+| Lines of Code (Infrastructure) | ~800    |
+| Test Projects Ready            | 3       |
+| Documentation Pages            | 3       |
+| Overall Phase 2 Progress       | 90%     |
+| **Total Project Progress**     | **25%** |
 
 ---
 
@@ -350,7 +389,7 @@ None currently. Code is production-ready for Phase 2 scope.
 
 ### Questions for Discussion
 
-1. **Authentication Strategy**: 
+1. **Authentication Strategy**:
    - Should we use ASP.NET Identity or custom JWT implementation?
    - Cookie-based or token-based auth for frontend?
 
@@ -376,19 +415,21 @@ Next PR will add **Application layer** (CQRS handlers) and **API controllers**.
 
 **Ready for Merge**: ✅ YES (after review approval)  
 **Blocks Next Phase**: ❌ NO  
-**Breaking Changes**: ❌ NO  
+**Breaking Changes**: ❌ NO
 
 ---
 
 ## 🤝 Review Approval Request
 
 @code-reviewers Please review this PR with focus on:
+
 - ✅ Clean Architecture compliance
 - ✅ Domain model correctness
 - ✅ Database schema design
 - ✅ Security considerations
 
 Once approved, I will:
+
 1. Merge to main branch
 2. Create EF Core migration
 3. Start Phase 3 (Application Layer)

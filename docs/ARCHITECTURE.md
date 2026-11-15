@@ -3,6 +3,7 @@
 ## Overview
 
 Vingo Roll is an enterprise marketplace platform for made-to-measure window treatments, built with:
+
 - **Frontend**: Next.js 15 + React 19 + TypeScript
 - **Backend**: ASP.NET Core (.NET 10) with Clean Architecture
 - **Database**: PostgreSQL with Entity Framework Core
@@ -14,7 +15,9 @@ Vingo Roll is an enterprise marketplace platform for made-to-measure window trea
 ## Architecture Principles
 
 ### Clean Architecture
+
 We follow Uncle Bob's Clean Architecture with strict dependency rules:
+
 ```
 Domain ← Application ← Infrastructure
                     ↑
@@ -22,17 +25,20 @@ Domain ← Application ← Infrastructure
 ```
 
 **Rules**:
+
 - Domain has no dependencies
 - Application depends only on Domain
 - Infrastructure implements Application interfaces
 - WebAPI orchestrates and handles HTTP
 
 ### CQRS (Command Query Responsibility Segregation)
+
 - **Commands**: Mutate state (CreateOrder, AddToCart)
 - **Queries**: Read state (GetProducts, GetOrder)
 - Separate models for reads vs writes where beneficial
 
 ### Domain-Driven Design (DDD)
+
 - Aggregates with clear boundaries
 - Domain events for side effects
 - Value objects for immutability
@@ -47,6 +53,7 @@ Domain ← Application ← Infrastructure
 **Purpose**: Business logic, entities, domain rules
 
 **Contains**:
+
 ```
 Entities/
 ├── Catalog/
@@ -96,6 +103,7 @@ Enums/
 **No dependencies** - Pure C# + domain logic
 
 **Example Entity**:
+
 ```csharp
 public class Product : BaseEntity
 {
@@ -103,19 +111,19 @@ public class Product : BaseEntity
     public string Name { get; private set; }
     public Money BasePrice { get; private set; }
     public Money? CompareAtPrice { get; private set; }
-    
+
     private readonly List<ProductMaterial> _materials = new();
     public IReadOnlyCollection<ProductMaterial> Materials => _materials;
-    
+
     public void UpdatePrice(Money newPrice)
     {
         if (newPrice.Amount <= 0)
             throw new DomainException("Price must be positive");
-            
+
         BasePrice = newPrice;
         RaiseDomainEvent(new ProductPriceChangedEvent(Id, newPrice));
     }
-    
+
     public Money CalculateFinalPrice(MaterialOption material, SizeOption size)
     {
         var materialDelta = material.PriceDelta;
@@ -132,6 +140,7 @@ public class Product : BaseEntity
 **Purpose**: Application business logic, orchestration
 
 **Contains**:
+
 ```
 Features/
 ├── Catalog/
@@ -188,41 +197,42 @@ Common/
 **Dependencies**: Domain only
 
 **Example Handler**:
+
 ```csharp
 public class CreateOrderHandler
 {
     private readonly IApplicationDbContext _context;
     private readonly ICurrentUserService _currentUser;
     private readonly IPricingService _pricing;
-    
+
     public async Task<OrderDto> Handle(CreateOrderCommand command)
     {
         // 1. Validate user
         var user = await _context.Users.FindAsync(_currentUser.UserId);
         if (user == null) throw new UnauthorizedException();
-        
+
         // 2. Get cart items
         var cart = await _context.Carts
             .Include(c => c.Items)
             .FirstOrDefaultAsync(c => c.UserId == user.Id);
-            
+
         if (cart == null || !cart.Items.Any())
             throw new ValidationException("Cart is empty");
-        
+
         // 3. Recalculate prices (NEVER trust client)
         var orderItems = new List<OrderItem>();
         foreach (var cartItem in cart.Items)
         {
             var product = await _context.Products.FindAsync(cartItem.ProductId);
             var unitPrice = _pricing.CalculatePrice(product, cartItem.Options);
-            
+
             orderItems.Add(new OrderItem(
                 product.Id,
                 cartItem.Quantity,
                 unitPrice
             ));
         }
-        
+
         // 4. Create order aggregate
         var order = Order.Create(
             user.Id,
@@ -230,15 +240,15 @@ public class CreateOrderHandler
             command.ShippingAddress,
             command.PaymentMethod
         );
-        
+
         // 5. Persist
         _context.Orders.Add(order);
         await _context.SaveChangesAsync();
-        
+
         // 6. Clear cart
         cart.Clear();
         await _context.SaveChangesAsync();
-        
+
         return order.ToDto();
     }
 }
@@ -251,6 +261,7 @@ public class CreateOrderHandler
 **Purpose**: External concerns (DB, I/O, 3rd party)
 
 **Contains**:
+
 ```
 Persistence/
 ├── VingoDbContext.cs
@@ -286,40 +297,41 @@ External/
 **Dependencies**: Application, Domain, external packages
 
 **Example Configuration**:
+
 ```csharp
 public class ProductConfiguration : IEntityTypeConfiguration<Product>
 {
     public void Configure(EntityTypeBuilder<Product> builder)
     {
         builder.ToTable("Products");
-        
+
         builder.HasKey(p => p.Id);
-        
+
         builder.Property(p => p.Slug)
             .HasMaxLength(200)
             .IsRequired();
-            
+
         builder.HasIndex(p => p.Slug)
             .IsUnique();
-            
+
         builder.OwnsOne(p => p.BasePrice, price =>
         {
             price.Property(m => m.Amount)
                 .HasColumnName("BasePrice")
                 .HasPrecision(18, 2)
                 .IsRequired();
-                
+
             price.Property(m => m.Currency)
                 .HasColumnName("Currency")
                 .HasMaxLength(3)
                 .HasDefaultValue("USD");
         });
-        
+
         builder.HasMany(p => p.Images)
             .WithOne()
             .HasForeignKey("ProductId")
             .OnDelete(DeleteBehavior.Cascade);
-            
+
         builder.HasMany(p => p.Materials)
             .WithMany(m => m.Products)
             .UsingEntity<Dictionary<string, object>>(
@@ -332,6 +344,7 @@ public class ProductConfiguration : IEntityTypeConfiguration<Product>
 ```
 
 **DbContext**:
+
 ```csharp
 public class VingoDbContext : DbContext, IApplicationDbContext
 {
@@ -340,12 +353,12 @@ public class VingoDbContext : DbContext, IApplicationDbContext
     public DbSet<Order> Orders => Set<Order>();
     public DbSet<Cart> Carts => Set<Cart>();
     // ... more DbSets
-    
+
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         modelBuilder.ApplyConfigurationsFromAssembly(Assembly.GetExecutingAssembly());
     }
-    
+
     public override async Task<int> SaveChangesAsync(CancellationToken ct = default)
     {
         // Audit trail
@@ -353,11 +366,11 @@ public class VingoDbContext : DbContext, IApplicationDbContext
         {
             if (entry.State == EntityState.Added)
                 entry.Entity.CreatedAt = DateTime.UtcNow;
-                
+
             if (entry.State == EntityState.Modified)
                 entry.Entity.UpdatedAt = DateTime.UtcNow;
         }
-        
+
         return await base.SaveChangesAsync(ct);
     }
 }
@@ -370,6 +383,7 @@ public class VingoDbContext : DbContext, IApplicationDbContext
 **Purpose**: HTTP endpoints, middleware, DI
 
 **Contains**:
+
 ```
 Controllers/
 ├── AuthController.cs
@@ -400,13 +414,14 @@ appsettings.Development.json
 ```
 
 **Example Controller**:
+
 ```csharp
 [ApiController]
 [Route("api/v1/[controller]")]
 public class ProductsController : ControllerBase
 {
     private readonly IMediator _mediator; // or direct handler injection
-    
+
     [HttpGet]
     [ProducesResponseType(typeof(PaginatedList<ProductDto>), 200)]
     public async Task<IActionResult> GetProducts(
@@ -415,7 +430,7 @@ public class ProductsController : ControllerBase
         var result = await _mediator.Send(query);
         return Ok(result);
     }
-    
+
     [HttpGet("{slug}")]
     [ProducesResponseType(typeof(ProductDetailDto), 200)]
     [ProducesResponseType(404)]
@@ -423,13 +438,13 @@ public class ProductsController : ControllerBase
     {
         var query = new GetProductBySlugQuery(slug);
         var result = await _mediator.Send(query);
-        
+
         if (result == null)
             return NotFound(new { message = $"Product '{slug}' not found" });
-            
+
         return Ok(result);
     }
-    
+
     [HttpPost]
     [Authorize(Roles = "Admin")]
     [ProducesResponseType(typeof(ProductDto), 201)]
@@ -439,8 +454,8 @@ public class ProductsController : ControllerBase
     {
         var result = await _mediator.Send(command);
         return CreatedAtAction(
-            nameof(GetProduct), 
-            new { slug = result.Slug }, 
+            nameof(GetProduct),
+            new { slug = result.Slug },
             result
         );
     }
@@ -448,6 +463,7 @@ public class ProductsController : ControllerBase
 ```
 
 **Program.cs** (Minimal API style):
+
 ```csharp
 var builder = WebApplication.CreateBuilder(args);
 
@@ -459,7 +475,7 @@ builder.Services.AddInfrastructureServices(   // Infrastructure layer
 builder.Services.AddWebAPIServices();         // WebAPI layer
 
 // Logging
-builder.Host.UseSerilog((context, config) => 
+builder.Host.UseSerilog((context, config) =>
     config.ReadFrom.Configuration(context.Configuration)
 );
 
@@ -489,6 +505,7 @@ app.Run();
 ## Data Flow Examples
 
 ### Query Flow (Read)
+
 ```
 Client → ProductsController.GetProducts()
       → GetProductsHandler.Handle()
@@ -499,6 +516,7 @@ Client → ProductsController.GetProducts()
 ```
 
 ### Command Flow (Write)
+
 ```
 Client → CartController.AddItem(command)
       → ValidateModelState
@@ -512,6 +530,7 @@ Client → CartController.AddItem(command)
 ```
 
 ### Order Creation Flow
+
 ```
 Client → OrdersController.CreateOrder(command)
       → [Authorize] check
@@ -534,6 +553,7 @@ Client → OrdersController.CreateOrder(command)
 ### Authentication Flow
 
 **Registration**:
+
 ```
 POST /api/v1/auth/register
 → Hash password (bcrypt)
@@ -545,6 +565,7 @@ POST /api/v1/auth/register
 ```
 
 **Login**:
+
 ```
 POST /api/v1/auth/login
 → Validate credentials
@@ -556,6 +577,7 @@ POST /api/v1/auth/login
 ```
 
 **Token Refresh**:
+
 ```
 POST /api/v1/auth/refresh
 → Read refresh token from cookie
@@ -570,18 +592,21 @@ POST /api/v1/auth/refresh
 ### Authorization Patterns
 
 **Role-based**:
+
 ```csharp
 [Authorize(Roles = "Admin")]
 public async Task<IActionResult> DeleteProduct(int id)
 ```
 
 **Policy-based**:
+
 ```csharp
 [Authorize(Policy = "CanManageOrders")]
 public async Task<IActionResult> CancelOrder(string orderId)
 ```
 
 **Resource ownership**:
+
 ```csharp
 var order = await _context.Orders.FindAsync(orderId);
 if (order.UserId != _currentUser.UserId && !_currentUser.IsAdmin)
@@ -593,24 +618,26 @@ if (order.UserId != _currentUser.UserId && !_currentUser.IsAdmin)
 ## Database Architecture
 
 ### Connection Management
+
 - Connection pooling (default)
 - Read replicas (future)
 - Retry policies for transient failures
 
 ### Transaction Strategy
+
 ```csharp
 await using var transaction = await _context.Database.BeginTransactionAsync();
 try
 {
     // 1. Update inventory
     await _context.SaveChangesAsync();
-    
+
     // 2. Create order
     await _context.SaveChangesAsync();
-    
+
     // 3. Clear cart
     await _context.SaveChangesAsync();
-    
+
     await transaction.CommitAsync();
 }
 catch
@@ -621,6 +648,7 @@ catch
 ```
 
 ### Indexing Strategy
+
 ```sql
 -- Performance-critical indexes
 CREATE INDEX idx_products_category ON products(category_id);
@@ -637,6 +665,7 @@ CREATE INDEX idx_cart_items_product ON cart_items(product_id);
 ### Levels
 
 **1. In-Memory Cache** (short-lived, hot data)
+
 ```csharp
 _memoryCache.GetOrCreateAsync("featured-products", async entry =>
 {
@@ -646,6 +675,7 @@ _memoryCache.GetOrCreateAsync("featured-products", async entry =>
 ```
 
 **2. Distributed Cache** (Redis, shared across instances)
+
 ```csharp
 await _distributedCache.SetAsync(
     $"product:{slug}",
@@ -658,12 +688,14 @@ await _distributedCache.SetAsync(
 ```
 
 **3. HTTP Cache Headers** (CDN, browser)
+
 ```csharp
 [ResponseCache(Duration = 300, VaryByQueryKeys = new[] { "category", "page" })]
 public async Task<IActionResult> GetProducts(...)
 ```
 
 ### Cache Invalidation
+
 ```csharp
 // On product update
 await _cache.RemoveAsync($"product:{product.Slug}");
@@ -676,6 +708,7 @@ await _cache.RemoveAsync($"category:{product.CategoryId}");
 ## Frontend Architecture (Next.js)
 
 ### Project Structure
+
 ```
 frontend/src/
 ├── app/                    # App Router pages
@@ -717,21 +750,22 @@ frontend/src/
 ```
 
 ### API Client (Axios)
+
 ```typescript
 // services/api.ts
-import axios from 'axios';
+import axios from "axios";
 
 export const api = axios.create({
   baseURL: process.env.NEXT_PUBLIC_API_URL,
   timeout: 10000,
   headers: {
-    'Content-Type': 'application/json',
+    "Content-Type": "application/json",
   },
 });
 
 // Request interceptor (add auth token)
 api.interceptors.request.use((config) => {
-  const token = localStorage.getItem('accessToken');
+  const token = localStorage.getItem("accessToken");
   if (token) {
     config.headers.Authorization = `Bearer ${token}`;
   }
@@ -748,11 +782,12 @@ api.interceptors.response.use(
       return api.request(error.config);
     }
     return Promise.reject(error);
-  }
+  },
 );
 ```
 
 ### TanStack Query Setup
+
 ```typescript
 // app/providers.tsx
 'use client';
@@ -782,6 +817,7 @@ export function Providers({ children }: { children: React.Node }) {
 ```
 
 ### Server Component (SSR)
+
 ```typescript
 // app/product/[slug]/page.tsx
 import { getProduct } from '@/services/products';
@@ -796,7 +832,7 @@ export async function generateMetadata({ params }) {
 
 export default async function ProductPage({ params }) {
   const product = await getProduct(params.slug);
-  
+
   return (
     <div>
       <ProductDetails product={product} />
@@ -807,6 +843,7 @@ export default async function ProductPage({ params }) {
 ```
 
 ### Client Component (Interactivity)
+
 ```typescript
 // components/product/add-to-cart-button.tsx
 'use client';
@@ -817,7 +854,7 @@ import { toast } from 'sonner';
 
 export function AddToCartButton({ productId }: { productId: string }) {
   const queryClient = useQueryClient();
-  
+
   const mutation = useMutation({
     mutationFn: addToCart,
     onSuccess: () => {
@@ -828,7 +865,7 @@ export function AddToCartButton({ productId }: { productId: string }) {
       toast.error('Failed to add to cart');
     },
   });
-  
+
   return (
     <button
       onClick={() => mutation.mutate({ productId, quantity: 1 })}
@@ -845,9 +882,10 @@ export function AddToCartButton({ productId }: { productId: string }) {
 ## Deployment Architecture
 
 ### Local Development
+
 ```yaml
 # docker-compose.yml
-version: '3.8'
+version: "3.8"
 services:
   postgres:
     image: postgres:17
@@ -859,12 +897,12 @@ services:
       - "5432:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
-  
+
   redis:
     image: redis:7-alpine
     ports:
       - "6379:6379"
-  
+
   backend:
     build: ./backend
     ports:
@@ -875,7 +913,7 @@ services:
     depends_on:
       - postgres
       - redis
-  
+
   frontend:
     build: ./frontend
     ports:
@@ -890,6 +928,7 @@ volumes:
 ```
 
 ### Production (Placeholder)
+
 ```
 Load Balancer (HTTPS)
   ↓
@@ -909,6 +948,7 @@ S3 / Azure Blob (Images)
 ## Observability
 
 ### Logging (Serilog)
+
 ```csharp
 Log.Information("Order {OrderId} created by user {UserId}", order.Id, userId);
 Log.Warning("Product {Slug} out of stock", slug);
@@ -916,6 +956,7 @@ Log.Error(ex, "Payment failed for order {OrderId}", orderId);
 ```
 
 ### Health Checks
+
 ```
 GET /health
 → Database: OK
@@ -925,6 +966,7 @@ GET /health
 ```
 
 ### Metrics (Future)
+
 - Request duration
 - Error rate
 - Active users
@@ -935,6 +977,7 @@ GET /health
 ## Conclusion
 
 This architecture provides:
+
 - ✅ Separation of concerns
 - ✅ Testability
 - ✅ Scalability
