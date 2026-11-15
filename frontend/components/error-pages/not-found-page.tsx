@@ -1,4 +1,4 @@
-import { Link } from "@tanstack/react-router";
+import Link from "next/link";
 import { Search, MessageCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
@@ -162,10 +162,10 @@ export function NotFoundPage() {
             style={{ animation: "fadeUpStagger 0.7s ease-out 550ms both" }}
           >
             <Button asChild className="px-8 py-3 text-base font-semibold">
-              <Link to="/">Back to Home</Link>
+              <Link href="/">Back to Home</Link>
             </Button>
             <Button asChild variant="outline" className="px-8 py-3 text-base font-semibold">
-              <Link to="/contact">
+              <Link href="/contact">
                 <MessageCircle className="h-4 w-4 mr-2" />
                 Get Help
               </Link>

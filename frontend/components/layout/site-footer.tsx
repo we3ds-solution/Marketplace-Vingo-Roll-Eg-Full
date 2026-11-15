@@ -1,5 +1,5 @@
 import { useState, type FormEvent } from "react";
-import { Link } from "@tanstack/react-router";
+import Link from "next/link";
 import { footerColumns } from "@/data/navigation";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -22,7 +22,7 @@ export function SiteFooter() {
       <div className="container-page py-16">
         <div className="border-border grid gap-10 border-b pb-14 lg:grid-cols-[1.2fr_2fr]">
           <div>
-            <Link to="/" className="font-display text-2xl tracking-[0.2em] uppercase">
+            <Link href="/" className="font-display text-2xl tracking-[0.2em] uppercase">
               Vingo<span className="text-accent">.</span>Roll
             </Link>
             <p className="text-muted-foreground mt-4 max-w-sm text-sm leading-relaxed">

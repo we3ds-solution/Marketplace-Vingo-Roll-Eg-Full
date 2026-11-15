@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Link, useRouter } from "@tanstack/react-router";
+import Link from "next/link";
 import { Heart, Menu, Moon, Search, Sun, User, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
@@ -154,22 +154,22 @@ export function SiteHeader() {
                       <AccordionContent>
                         <ul className="space-y-2">
                           <li>
-                            <Link to="/about" className="text-muted-foreground text-sm">
+                            <Link href="/about" className="text-muted-foreground text-sm">
                               About Vingo Roll
                             </Link>
                           </li>
                           <li>
-                            <Link to="/about/our-story" className="text-muted-foreground text-sm">
+                            <Link href="/about/our-story" className="text-muted-foreground text-sm">
                               Our Story
                             </Link>
                           </li>
                           <li>
-                            <Link to="/trade" className="text-muted-foreground text-sm">
+                            <Link href="/trade" className="text-muted-foreground text-sm">
                               Trade Program
                             </Link>
                           </li>
                           <li>
-                            <Link to="/contact" className="text-muted-foreground text-sm">
+                            <Link href="/contact" className="text-muted-foreground text-sm">
                               Contact
                             </Link>
                           </li>
@@ -178,14 +178,14 @@ export function SiteHeader() {
                     </AccordionItem>
                   </Accordion>
                   <Button asChild className="mt-6 w-full">
-                    <Link to="/quote">Get a quick quote</Link>
+                    <Link href="/quote">Get a quick quote</Link>
                   </Button>
                 </div>
               </SheetContent>
             </Sheet>
           </div>
 
-          <Link to="/" className="font-display text-xl tracking-[0.2em] uppercase md:text-2xl">
+          <Link href="/" className="font-display text-xl tracking-[0.2em] uppercase md:text-2xl">
             Vingo<span className="text-accent">.</span>Roll
           </Link>
 

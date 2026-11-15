@@ -1,5 +1,5 @@
 import { Ruler, Truck, Shield, Palette } from "lucide-react";
-import { Link } from "@tanstack/react-router";
+import Link from "next/link";
 
 const items = [
   {

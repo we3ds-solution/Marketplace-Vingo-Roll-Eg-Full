@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Link } from "@tanstack/react-router";
+import Link from "next/link";
 import { ShoppingBag, Minus, Plus, Trash2 } from "lucide-react";
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
 import { Button } from "@/components/ui/button";
@@ -62,7 +62,7 @@ export function CartDrawer() {
               Add items to get started with your perfect window treatment.
             </p>
             <Button asChild onClick={handleClose} className="w-full">
-              <Link to="/shop">Browse collection</Link>
+              <Link href="/shop">Browse collection</Link>
             </Button>
           </div>
         ) : (
@@ -173,10 +173,10 @@ export function CartDrawer() {
               {/* Action Buttons */}
               <div className="space-y-2 pt-4">
                 <Button asChild className="w-full" onClick={handleClose}>
-                  <Link to="/quote">Request a quote</Link>
+                  <Link href="/quote">Request a quote</Link>
                 </Button>
                 <Button asChild variant="outline" className="w-full" onClick={handleClose}>
-                  <Link to="/swatches">Add free swatches</Link>
+                  <Link href="/swatches">Add free swatches</Link>
                 </Button>
               </div>
             </div>

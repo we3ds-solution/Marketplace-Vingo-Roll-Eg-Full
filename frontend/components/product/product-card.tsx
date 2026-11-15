@@ -1,4 +1,4 @@
-import { Link } from "@tanstack/react-router";
+import Link from "next/link";
 import { Heart, Star, ShoppingBag } from "lucide-react";
 import type { Product } from "@/types";
 import { formatPrice } from "@/lib/formatters";
@@ -45,7 +45,7 @@ export function ProductCard({
   return (
     <article className="group relative">
       <div className="bg-muted relative aspect-[4/5] overflow-hidden rounded-sm">
-        <Link to="/product/$slug" params={{ slug: product.slug }} className="absolute inset-0 z-0">
+        <Link href="/product/$slug" params={{ slug: product.slug }} className="absolute inset-0 z-0">
           <img
             src={main?.src ?? ""}
             alt={main?.alt ?? product.name}
