@@ -27,6 +27,9 @@ builder.Services.AddScoped<Vingo.Application.Common.Interfaces.IApplicationDbCon
 
 // Register Application Handlers
 builder.Services.AddScoped<Vingo.Application.Features.Catalog.Queries.GetProducts.GetProductsHandler>();
+builder.Services.AddScoped<Vingo.Application.Features.Catalog.Queries.GetCategories.GetCategoriesHandler>();
+builder.Services.AddScoped<Vingo.Application.Features.Cart.Commands.AddToCart.AddToCartHandler>();
+builder.Services.AddScoped<Vingo.Application.Features.Orders.Commands.CreateOrder.CreateOrderHandler>();
 
 // CORS - Allow frontend origins
 var allowedOrigins = builder.Configuration.GetSection("CorsSettings:AllowedOrigins").Get<string[]>() 
