@@ -1,0 +1,16 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\Vingo.Domain\Vingo.Domain.csproj" />
+    <ProjectReference Include="..\..\Vingo.Application\Vingo.Application.csproj" />
+    <ProjectReference Include="..\..\Vingo.Infrastructure\Vingo.Infrastructure.csproj" />
+    <ProjectReference Include="..\..\Vingo.WebAPI\Vingo.WebAPI.csproj" />
+  </ItemGroup>
+
+  <PropertyGroup>
+    <TargetFramework>net9.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+</Project>

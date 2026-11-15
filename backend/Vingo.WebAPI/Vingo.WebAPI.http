@@ -1,0 +1,6 @@
+@Vingo.WebAPI_HostAddress = http://localhost:5072
+
+GET {{Vingo.WebAPI_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
