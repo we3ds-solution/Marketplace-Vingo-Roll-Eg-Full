@@ -1,12 +1,13 @@
 using Microsoft.EntityFrameworkCore;
 using System.Reflection;
+using Vingo.Application.Common.Interfaces;
 using Vingo.Domain.Entities.Catalog;
 using Vingo.Domain.Entities.Orders;
 using Vingo.Domain.Entities.Shopping;
 
 namespace Vingo.Infrastructure.Persistence;
 
-public class VingoDbContext : DbContext
+public class VingoDbContext : DbContext, IApplicationDbContext
 {
     public VingoDbContext(DbContextOptions<VingoDbContext> options) : base(options)
     {

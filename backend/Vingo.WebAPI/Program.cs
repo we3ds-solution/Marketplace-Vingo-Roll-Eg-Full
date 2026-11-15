@@ -21,6 +21,13 @@ var connectionString = builder.Configuration.GetConnectionString("DefaultConnect
 builder.Services.AddDbContext<VingoDbContext>(options =>
     options.UseNpgsql(connectionString));
 
+// Register DbContext as IApplicationDbContext
+builder.Services.AddScoped<Vingo.Application.Common.Interfaces.IApplicationDbContext>(provider => 
+    provider.GetRequiredService<VingoDbContext>());
+
+// Register Application Handlers
+builder.Services.AddScoped<Vingo.Application.Features.Catalog.Queries.GetProducts.GetProductsHandler>();
+
 // CORS - Allow frontend origins
 var allowedOrigins = builder.Configuration.GetSection("CorsSettings:AllowedOrigins").Get<string[]>() 
     ?? new[] { "http://localhost:3000" };
