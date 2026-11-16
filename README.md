@@ -28,7 +28,7 @@ Marketplace-Vingo-Roll-Eg-Full/
 │   ├── DATABASE.md
 │   └── API.md
 │
-├── docker/            # Deployment assets
+└── .github/           # CI (.github/workflows/ci.yml) + Dependabot
 ```
 
 ---

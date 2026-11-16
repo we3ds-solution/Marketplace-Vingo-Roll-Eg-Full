@@ -1,8 +1,8 @@
 version: 2
 updates:
-  # npm dependencies
+  # Frontend (npm) — the lockfile lives in frontend/, not the repo root.
   - package-ecosystem: "npm"
-    directory: "/"
+    directory: "/frontend"
     schedule:
       interval: "weekly"
       day: "monday"
@@ -16,11 +16,23 @@ updates:
     commit-message:
       prefix: "chore(deps):"
       include: "scope"
-    pull-request-branch-name:
-      separator: "/"
-    allow:
-      - dependency-type: "direct"
-      - dependency-type: "indirect"
+
+  # Backend (NuGet)
+  - package-ecosystem: "nuget"
+    directory: "/backend"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+      time: "02:30"
+    open-pull-requests-limit: 5
+    reviewers:
+      - "Mostafa-SAID7"
+    labels:
+      - "dependencies"
+      - "nuget"
+    commit-message:
+      prefix: "chore(deps):"
+      include: "scope"
 
   # GitHub Actions
   - package-ecosystem: "github-actions"
