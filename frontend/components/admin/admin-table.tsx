@@ -7,7 +7,7 @@ import { cn } from "@/lib/utils";
 export function AdminTable({ className, ...props }: HTMLAttributes<HTMLTableElement>) {
   return (
     <div className="border-border overflow-hidden overflow-x-auto rounded-sm border">
-      <table className={cn("w-full text-left text-sm", className)} {...props} />
+      <table className={cn("w-full text-start text-sm", className)} {...props} />
     </div>
   );
 }

@@ -208,6 +208,18 @@ app.MapControllers();
 // Health check endpoint for monitoring
 app.MapHealthChecks("/health");
 
+// Root status route — the bare domain responds with an API index instead of a 404.
+app.MapGet("/", () => Results.Json(new
+{
+    name = "Vingo Roll API",
+    status = "ok",
+    version = "1.0",
+    environment = app.Environment.EnvironmentName,
+    endpoints = app.Environment.IsDevelopment()
+        ? new[] { "/health", "/api/v1", "/scalar/v1" }
+        : new[] { "/health", "/api/v1" },
+}));
+
 Log.Information("🚀 Vingo Roll API starting...");
 
 try

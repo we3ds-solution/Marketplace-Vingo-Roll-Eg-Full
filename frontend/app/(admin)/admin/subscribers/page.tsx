@@ -65,7 +65,7 @@ export default function AdminSubscribersPage() {
             <AdminTh>Email</AdminTh>
             <AdminTh>Joined</AdminTh>
             <AdminTh>Status</AdminTh>
-            <AdminTh className="text-right">Actions</AdminTh>
+            <AdminTh className="text-end">Actions</AdminTh>
           </AdminTHead>
           <tbody>
             {data.map((s) => (
@@ -75,7 +75,7 @@ export default function AdminSubscribersPage() {
                   {new Date(s.createdAt).toLocaleDateString("en-US", { year: "numeric", month: "short", day: "numeric" })}
                 </AdminTd>
                 <AdminTd><AdminBadge tone={s.isActive ? "green" : "red"}>{s.isActive ? "Subscribed" : "Unsubscribed"}</AdminBadge></AdminTd>
-                <AdminTd className="text-right">
+                <AdminTd className="text-end">
                   <div className="flex items-center justify-end gap-2">
                     {s.isActive && (
                       <Button variant="outline" size="sm" onClick={() => unsubscribe.mutate(s.id)}>

@@ -3,6 +3,7 @@ using System.Reflection;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Vingo.Application.Common.Interfaces;
+using Vingo.Domain.Entities.Account;
 using Vingo.Domain.Entities.Catalog;
 using Vingo.Domain.Entities.Content;
 using Vingo.Domain.Entities.Marketing;
@@ -47,6 +48,10 @@ public class VingoDbContext : IdentityDbContext<Identity.VingoUser, IdentityRole
     // Marketing
     public DbSet<Lead> Leads => Set<Lead>();
     public DbSet<NewsletterSubscriber> NewsletterSubscribers => Set<NewsletterSubscriber>();
+
+    // Account
+    public DbSet<VendorApplication> VendorApplications => Set<VendorApplication>();
+    public DbSet<AppNotification> AppNotifications => Set<AppNotification>();
 
     // Identity / Auth
     public DbSet<Identity.RefreshToken> RefreshTokens => Set<Identity.RefreshToken>();

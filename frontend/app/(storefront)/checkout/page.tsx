@@ -94,7 +94,7 @@ export default function CheckoutPage() {
       />
 
       <Section>
-        <div className="grid lg:grid-cols-3 gap-8">
+        <div className="grid gap-6 lg:grid-cols-3">
           {/* Form */}
           <form onSubmit={handleSubmit} className="lg:col-span-2 max-w-2xl">
             <div className="space-y-6">

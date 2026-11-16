@@ -5,6 +5,7 @@ import { usePathname, useRouter } from "next/navigation";
 import { useEffect, useState, type ReactNode } from "react";
 import { cn } from "@/lib/utils";
 import { useAuth } from "@/lib/auth/auth-context";
+import { useUIStore } from "@/stores/ui-store";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
@@ -27,6 +28,7 @@ import {
   Menu,
   ChevronsLeft,
   ChevronsRight,
+  Store,
   type LucideIcon,
 } from "lucide-react";
 
@@ -59,6 +61,7 @@ const NAV: NavSection[] = [
     title: "Commerce & marketing",
     items: [
       { href: "/admin/orders", label: "Orders", icon: ShoppingBag },
+      { href: "/admin/vendors", label: "Vendors", icon: Store },
       { href: "/admin/leads", label: "Leads", icon: Inbox },
       { href: "/admin/reviews", label: "Reviews", icon: Star },
       { href: "/admin/subscribers", label: "Subscribers", icon: Mail },
@@ -181,7 +184,8 @@ export function AdminShell({ children }: { children: ReactNode }) {
 
   useEffect(() => {
     if (status === "unauthenticated") {
-      router.replace(`/login?next=${encodeURIComponent("/admin")}`);
+      useUIStore.getState().openAuthModal("login", "/admin");
+      router.replace("/");
     }
   }, [status, router]);
 
@@ -214,7 +218,7 @@ export function AdminShell({ children }: { children: ReactNode }) {
       <aside
         aria-label="Admin navigation"
         className={cn(
-          "border-border bg-card sticky top-0 hidden h-screen shrink-0 flex-col border-r transition-[width] duration-200 ease-out md:flex",
+          "border-border bg-card sticky top-0 hidden h-screen shrink-0 flex-col border-e transition-[width] duration-200 ease-out md:flex",
           collapsed ? "w-16" : "w-60",
         )}
       >
@@ -248,7 +252,7 @@ export function AdminShell({ children }: { children: ReactNode }) {
               </Button>
             </SheetTrigger>
             <SheetContent side="left" className="w-72 max-w-[85vw] p-0">
-              <SheetHeader className="border-border h-14 flex-row items-center justify-between gap-2 border-b px-4 py-0 text-left">
+              <SheetHeader className="border-border h-14 flex-row items-center justify-between gap-2 border-b px-4 py-0 text-start">
                 <SheetTitle className="font-display text-base">
                   Vingo Roll <span className="text-muted-foreground text-xs font-normal">/ admin</span>
                 </SheetTitle>

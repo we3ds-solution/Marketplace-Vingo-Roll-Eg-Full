@@ -126,7 +126,7 @@ export default function CheckoutReviewPage() {
             }
           />
         ) : (
-          <div className="grid gap-8 lg:grid-cols-3">
+          <div className="grid gap-6 lg:grid-cols-3">
             <div className="space-y-6 lg:col-span-2 max-w-2xl">
               {/* Items */}
               <div className="border-border overflow-hidden rounded-sm border">

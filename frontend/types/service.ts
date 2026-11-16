@@ -4,7 +4,9 @@
 
 export type Service = {
   id: string;
+  /** Route segment under /services, or a full path when `href` is set */
   slug: string;
+  href?: string;
   name: string;
   summary: string;
   details: string[];

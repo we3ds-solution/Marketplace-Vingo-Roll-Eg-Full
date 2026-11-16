@@ -63,7 +63,7 @@ export function ProductCard({
             />
           )}
         </Link>
-        <div className="absolute top-3 left-3 flex flex-col gap-1.5 z-20">
+        <div className="absolute top-3 start-3 z-20 flex flex-col gap-1.5">
           {product.sale && (
             <span className="bg-destructive text-destructive-foreground px-2 py-1 text-xs rounded">Sale</span>
           )}
@@ -75,8 +75,8 @@ export function ProductCard({
           )}
         </div>
 
-        {/* Right Side Icons Stack - Heart & Eye */}
-        <div className="absolute top-3 right-3 flex flex-col gap-1.5 z-30">
+        {/* Icon stack — end side (heart & quick view) */}
+        <div className="absolute top-3 end-3 z-30 flex flex-col gap-1.5">
           <button
             type="button"
             onClick={(e) => {
@@ -95,14 +95,14 @@ export function ProductCard({
           <QuickViewButton product={product} />
         </div>
 
-        {/* Add to Cart Button - Visible on Hover, Bottom Left */}
+        {/* Add to cart — hover-reveal, docked to the inline bottom inset */}
         <button
           onClick={(e) => {
             e.preventDefault();
             e.stopPropagation();
             handleAddToCart();
           }}
-          className="absolute bottom-3 left-3 right-3 flex items-center justify-center gap-2 bg-accent hover:bg-accent/90 text-accent-foreground px-3 py-2 rounded-sm font-medium text-sm transition-all opacity-0 group-hover:opacity-100 z-30"
+          className="absolute bottom-3 inset-x-3 z-30 flex items-center justify-center gap-2 rounded-sm bg-accent px-3 py-2 text-sm font-medium text-accent-foreground opacity-0 transition-all group-hover:opacity-100 hover:bg-accent/90"
           aria-label={`Add ${product.name} to cart`}
         >
           <ShoppingBag className="h-4 w-4" />
@@ -123,7 +123,7 @@ export function ProductCard({
             </span>
           </p>
         </div>
-        <div className="text-right">
+        <div className="text-end">
           <p className="text-sm font-medium">{formatPrice(product.price)}</p>
           {product.compareAtPrice ? (
             <p className="text-muted-foreground text-xs line-through">
@@ -156,7 +156,7 @@ export function ProductGrid({
   return (
     <div
       className={cn(
-        "grid gap-x-6 gap-y-12 sm:grid-cols-2",
+        "grid gap-4 sm:grid-cols-2 sm:gap-6",
         density === "dense" ? "lg:grid-cols-4" : "lg:grid-cols-3",
       )}
     >

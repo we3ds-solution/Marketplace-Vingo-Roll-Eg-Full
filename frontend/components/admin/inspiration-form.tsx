@@ -203,7 +203,7 @@ export function InspirationForm({ existingId }: { existingId?: string }) {
           className="mt-3"
           onClick={() => setSections((prev) => [...prev, { heading: "", body: "", imageUrl: "" }])}
         >
-          <Plus className="mr-1.5 h-4 w-4" aria-hidden="true" />
+          <Plus className="me-1.5 h-4 w-4" aria-hidden="true" />
           Add section
         </Button>
       </fieldset>

@@ -64,7 +64,7 @@ export default function CartPage() {
             }
           />
         ) : (
-          <div className="grid gap-12 lg:grid-cols-[1.6fr_1fr]">
+          <div className="grid gap-6 lg:gap-8 lg:grid-cols-[1.6fr_1fr]">
             <ul className="space-y-6">
               {items.map((item) => (
                 <li key={item.key} className="border-border flex gap-5 border-b pb-6">

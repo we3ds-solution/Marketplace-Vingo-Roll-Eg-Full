@@ -1,4 +1,4 @@
-﻿import type { Metadata } from "next";
+import type { Metadata } from "next";
 import { Crumbs, PageHeader, Section } from "@/components/common/section";
 import { ProductGrid } from "@/components/product/product-card";
 import { apiGetProducts } from "@/lib/api/client";
@@ -9,7 +9,7 @@ export const metadata: Metadata = {
   description: "Control your window treatments with your voice, phone, or schedule.",
 };
 
-export const dynamic = "force-dynamic";
+export const revalidate = 60; // ISR: serve from Next's cache, revalidate in the background every minute
 
 export default async function SmartHomePage() {
   const products = mapApiProducts(

@@ -82,7 +82,7 @@ export function SimpleEntityAdmin<Row extends { id: string }>({
         action={
           <Button asChild size="sm">
             <Link href={newHref}>
-              <Plus className="mr-1.5 h-4 w-4" aria-hidden="true" />
+              <Plus className="me-1.5 h-4 w-4" aria-hidden="true" />
               New
             </Link>
           </Button>
@@ -91,12 +91,12 @@ export function SimpleEntityAdmin<Row extends { id: string }>({
 
       {searchable && (
         <div className="relative mb-4 max-w-md">
-          <Search className="text-muted-foreground pointer-events-none absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2" aria-hidden="true" />
+          <Search className="text-muted-foreground pointer-events-none absolute top-1/2 start-3 h-4 w-4 -translate-y-1/2" aria-hidden="true" />
           <Input
             value={search}
             onChange={(e) => setSearch(e.target.value)}
             placeholder="Search…"
-            className="pl-9"
+            className="ps-9"
             aria-label="Search"
           />
         </div>
@@ -112,7 +112,7 @@ export function SimpleEntityAdmin<Row extends { id: string }>({
             {columns.map((c, i) => (
               <AdminTh key={i} className={c.className}>{c.header}</AdminTh>
             ))}
-            <AdminTh className="w-24 text-right">Actions</AdminTh>
+            <AdminTh className="w-24 text-end">Actions</AdminTh>
           </AdminTHead>
           <tbody>
             {data.map((row) => (
@@ -120,7 +120,7 @@ export function SimpleEntityAdmin<Row extends { id: string }>({
                 {columns.map((c, i) => (
                   <AdminTd key={i} className={c.className}>{c.render(row)}</AdminTd>
                 ))}
-                <AdminTd className="text-right">
+                <AdminTd className="text-end">
                   <div className="flex items-center justify-end gap-1">
                     <Link
                       href={`${newHref.replace(/\/new$/, "")}/${row.id}`}

@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
@@ -183,7 +183,7 @@ export default function StyleFinderPage() {
                     setAnswers((a) => ({ ...a, [current.id]: option.value }));
                     setStep((s) => Math.min(s + 1, QUESTIONS.length));
                   }}
-                  className="border-border hover:border-accent hover:bg-accent/5 rounded-sm border p-4 text-left text-sm transition-colors"
+                  className="border-border hover:border-accent hover:bg-accent/5 rounded-sm border p-4 text-start text-sm transition-colors"
                 >
                   {option.label}
                 </button>
@@ -197,7 +197,7 @@ export default function StyleFinderPage() {
                 onClick={() => setStep((s) => Math.max(0, s - 1))}
                 disabled={step === 0}
               >
-                <ArrowLeft className="mr-2 h-4 w-4" aria-hidden="true" /> Back
+                <ArrowLeft className="me-2 h-4 w-4 rtl:-scale-x-100" aria-hidden="true" /> Back
               </Button>
               {step < QUESTIONS.length - 1 && (
                 <Button
@@ -206,7 +206,7 @@ export default function StyleFinderPage() {
                   onClick={() => setStep((s) => s + 1)}
                   disabled={!answers[current?.id ?? "room"]}
                 >
-                  Next <ArrowRight className="ml-2 h-4 w-4" aria-hidden="true" />
+                  Next <ArrowRight className="ms-2 h-4 w-4 rtl:-scale-x-100" aria-hidden="true" />
                 </Button>
               )}
             </div>
@@ -221,7 +221,7 @@ export default function StyleFinderPage() {
                 <Button asChild>
                   <Link href={`/shop/${result.slug}`}>
                     Shop {result.name}
-                    <ArrowRight className="ml-2 h-4 w-4" aria-hidden="true" />
+                    <ArrowRight className="ms-2 h-4 w-4 rtl:-scale-x-100" aria-hidden="true" />
                   </Link>
                 </Button>
                 <Button
@@ -231,7 +231,7 @@ export default function StyleFinderPage() {
                     setStep(0);
                   }}
                 >
-                  <RotateCcw className="mr-2 h-4 w-4" aria-hidden="true" /> Start over
+                  <RotateCcw className="me-2 h-4 w-4" aria-hidden="true" /> Start over
                 </Button>
               </div>
             </div>

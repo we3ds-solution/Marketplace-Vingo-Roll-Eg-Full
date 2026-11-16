@@ -16,6 +16,7 @@ export type AuthUser = {
   email: string;
   displayName: string;
   roles: string[];
+  vendorApplicationStatus?: string | null;
 };
 
 export type AuthStatus = "loading" | "authenticated" | "unauthenticated";
@@ -26,7 +27,13 @@ type AuthContextValue = {
   status: AuthStatus;
   isAdmin: boolean;
   signIn: (email: string, password: string) => Promise<void>;
-  signUp: (displayName: string, email: string, password: string) => Promise<void>;
+  signUp: (
+    displayName: string,
+    email: string,
+    password: string,
+    accountType?: "client" | "vendor",
+    vendor?: { companyName: string; message?: string },
+  ) => Promise<void>;
   signOut: () => Promise<void>;
   authedFetch: <T = unknown>(path: string, options?: RequestInit) => Promise<T>;
 };
@@ -117,8 +124,20 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   );
 
   const signUp = useCallback(
-    (displayName: string, email: string, password: string) =>
-      authenticate("/api/v1/auth/register", { displayName, email, password }),
+    (
+      displayName: string,
+      email: string,
+      password: string,
+      accountType: "client" | "vendor" = "client",
+      vendor?: { companyName: string; message?: string },
+    ) =>
+      authenticate("/api/v1/auth/register", {
+        displayName,
+        email,
+        password,
+        accountType,
+        ...(accountType === "vendor" ? { companyName: vendor?.companyName ?? "", message: vendor?.message ?? "" } : {}),
+      }),
     [authenticate],
   );
 

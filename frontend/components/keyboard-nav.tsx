@@ -6,30 +6,24 @@ export function KeyboardNavigation() {
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       // Skip to main content with Alt+M
-      if (e.altKey && e.key === 'm') {
+      if (e.altKey && e.key === "m") {
         e.preventDefault();
-        const mainContent = document.getElementById('main-content');
+        const mainContent = document.getElementById("main-content");
         if (mainContent) {
           mainContent.focus();
-          mainContent.scrollIntoView({ behavior: 'smooth' });
+          mainContent.scrollIntoView({ behavior: "smooth" });
         }
       }
 
-      // Open search with Ctrl+K or Cmd+K
-      if ((e.ctrlKey || e.metaKey) && e.key === 'k') {
-        e.preventDefault();
-        window.location.href = '/search';
-      }
-
       // Navigate to cart with Ctrl+B or Cmd+B
-      if ((e.ctrlKey || e.metaKey) && e.key === 'b') {
+      if ((e.ctrlKey || e.metaKey) && e.key === "b") {
         e.preventDefault();
-        window.location.href = '/cart';
+        window.location.href = "/cart";
       }
     };
 
-    document.addEventListener('keydown', handleKeyDown);
-    return () => document.removeEventListener('keydown', handleKeyDown);
+    document.addEventListener("keydown", handleKeyDown);
+    return () => document.removeEventListener("keydown", handleKeyDown);
   }, []);
 
   return null;

@@ -100,7 +100,7 @@ export default function AdminOrderDetailPage() {
   return (
     <>
       <Link href="/admin/orders" className="text-muted-foreground hover:text-foreground inline-flex items-center gap-1.5 text-sm">
-        <ArrowLeft className="h-4 w-4" aria-hidden="true" />
+        <ArrowLeft className="h-4 w-4 rtl:-scale-x-100" aria-hidden="true" />
         Orders
       </Link>
 
@@ -129,8 +129,8 @@ export default function AdminOrderDetailPage() {
           <AdminTable>
             <AdminTHead>
               <AdminTh>Item</AdminTh>
-              <AdminTh className="text-right">Qty</AdminTh>
-              <AdminTh className="text-right">Total</AdminTh>
+              <AdminTh className="text-end">Qty</AdminTh>
+              <AdminTh className="text-end">Total</AdminTh>
             </AdminTHead>
             <tbody>
               {data.items.map((item, i) => (
@@ -141,8 +141,8 @@ export default function AdminOrderDetailPage() {
                       {[item.materialName, item.colorName, item.sizeLabel, item.mount].filter(Boolean).join(" · ")}
                     </p>
                   </AdminTd>
-                  <AdminTd className="text-right">{item.quantity}</AdminTd>
-                  <AdminTd className="text-right tabular-nums">{formatPrice(item.totalPrice)}</AdminTd>
+                  <AdminTd className="text-end">{item.quantity}</AdminTd>
+                  <AdminTd className="text-end tabular-nums">{formatPrice(item.totalPrice)}</AdminTd>
                 </AdminTr>
               ))}
             </tbody>

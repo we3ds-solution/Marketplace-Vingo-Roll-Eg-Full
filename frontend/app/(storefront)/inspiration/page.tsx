@@ -8,7 +8,7 @@ export const metadata: Metadata = {
   description: "Each project lists the exact treatments used, so you can shop the look.",
 };
 
-export const dynamic = "force-dynamic";
+export const revalidate = 60; // ISR: serve from Next's cache, revalidate in the background every minute
 
 export default async function InspirationPage() {
   const [stories, rooms] = await Promise.all([

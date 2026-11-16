@@ -15,9 +15,11 @@ import {
 } from "@/components/ui/accordion";
 import { MegaMenu } from "@/components/layout/mega-menu";
 import { CartDrawer } from "@/components/cart/cart-drawer";
+import { NotificationsBell } from "@/components/layout/notifications-bell";
 import { nav } from "@/lib/data/navigation";
 import { useWishlistStore } from "@/stores/wishlist-store";
 import { useAuth } from "@/lib/auth/auth-context";
+import { useUIStore } from "@/stores/ui-store";
 import { useHydrated } from "@/hooks/use-hydrated";
 import { cn } from "@/lib/utils";
 
@@ -74,7 +76,7 @@ function SheetThemeToggle() {
 function CountBadge({ count }: { count: number }) {
   if (count <= 0) return null;
   return (
-    <span className="bg-accent text-accent-foreground absolute -top-0.5 -right-0.5 grid h-4 min-w-4 place-items-center rounded-full px-1 text-[10px] leading-none">
+    <span className="bg-accent text-accent-foreground absolute -top-0.5 -end-0.5 grid h-4 min-w-4 place-items-center rounded-full px-1 text-[10px] leading-none">
       {count}
     </span>
   );
@@ -88,7 +90,11 @@ export function SiteHeader({ overlay = false }: { overlay?: boolean }) {
   const wishlist = useWishlistStore((s) => s.slugs);
   const hydrated = useWishlistStore((s) => s.hydrated);
   const refreshWishlist = useWishlistStore((s) => s.refresh);
-  const { isAdmin } = useAuth();
+  const { isAdmin, status } = useAuth();
+  const isAuthenticated = status === "authenticated";
+  const openSearch = useUIStore((s) => s.openSearch);
+  const openWishlist = useUIStore((s) => s.openWishlist);
+  const openAuthModal = useUIStore((s) => s.openAuthModal);
 
   useEffect(() => {
     void refreshWishlist();
@@ -128,7 +134,7 @@ export function SiteHeader({ overlay = false }: { overlay?: boolean }) {
       <span className="min-[460px]:hidden">Free swatches on every order</span>
       <button
         onClick={() => setBannerVisible(false)}
-        className={`${FOCUS_RING} hover:opacity-70 absolute right-4 top-1/2 -translate-y-1/2 transition-opacity`}
+        className={`${FOCUS_RING} hover:opacity-70 absolute end-4 top-1/2 -translate-y-1/2 transition-opacity`}
         aria-label="Close announcement"
       >
         <X className="h-4 w-4" aria-hidden="true" />
@@ -169,12 +175,13 @@ export function SiteHeader({ overlay = false }: { overlay?: boolean }) {
                   <SheetDescription className="sr-only">Site navigation menu</SheetDescription>
                 </SheetHeader>
                 <div className="p-5">
-                  <Link
-                    href="/search"
-                    className="border-border text-muted-foreground mb-6 flex items-center gap-2 rounded-sm border px-3 py-2.5 text-sm"
+                  <button
+                    type="button"
+                    onClick={() => { setOpen(false); useUIStore.getState().openSearch(); }}
+                    className="border-border text-muted-foreground mb-6 flex w-full items-center gap-2 rounded-sm border px-3 py-2.5 text-start text-sm transition-colors hover:text-foreground"
                   >
                     <Search className="h-4 w-4" aria-hidden="true" /> Search curtains, shades, rooms
-                  </Link>
+                  </button>
                   <Accordion type="single" collapsible className="w-full">
                     {menus.map((menu) => (
                       <AccordionItem key={menu.label} value={menu.label}>
@@ -236,14 +243,34 @@ export function SiteHeader({ overlay = false }: { overlay?: boolean }) {
                     <Link href="/quote">Get a quick quote</Link>
                   </Button>
                   <div className="text-muted-foreground mt-4 flex flex-wrap items-center gap-4 text-xs">
-                    <Link href="/account" onClick={() => setOpen(false)} className="hover:text-foreground">Account</Link>
-                    <Link href="/wishlist" onClick={() => setOpen(false)} className="hover:text-foreground">Wishlist</Link>
                     {isAdmin && (
                       <Link href="/admin" onClick={() => setOpen(false)} className="text-accent">
                         Studio dashboard
                       </Link>
                     )}
                     <SheetThemeToggle />
+                  </div>
+                  <div className="mt-4 flex flex-col gap-2">
+                    {isAuthenticated ? (
+                      <Link href="/account" onClick={() => setOpen(false)} className="border-border hover:border-accent inline-flex items-center gap-2 rounded-sm border px-3 py-2.5 text-sm transition-colors">
+                        <User className="h-4 w-4" aria-hidden="true" /> My account
+                      </Link>
+                    ) : (
+                      <button
+                        type="button"
+                        onClick={() => { setOpen(false); useUIStore.getState().openAuthModal("login"); }}
+                        className="border-border hover:border-accent inline-flex items-center gap-2 rounded-sm border px-3 py-2.5 text-start text-sm transition-colors"
+                      >
+                        <User className="h-4 w-4" aria-hidden="true" /> Sign in / Create account
+                      </button>
+                    )}
+                    <button
+                      type="button"
+                      onClick={() => { setOpen(false); useUIStore.getState().openWishlist(); }}
+                      className="border-border hover:border-accent inline-flex items-center gap-2 rounded-sm border px-3 py-2.5 text-start transition-colors"
+                    >
+                      <Heart className="h-4 w-4" aria-hidden="true" /> Wishlist
+                    </button>
                   </div>
                 </div>
               </SheetContent>
@@ -277,22 +304,25 @@ export function SiteHeader({ overlay = false }: { overlay?: boolean }) {
           </nav>
 
           <div className="flex items-center gap-0.5">
-            <Link
-              href="/search"
-              aria-label="Search"
+            <button
+              type="button"
+              onClick={openSearch}
+              aria-label="Search products"
               className={`${FOCUS_RING} hover:text-accent grid h-10 w-10 place-items-center transition-colors`}
             >
               <Search className="h-[18px] w-[18px]" aria-hidden="true" />
-            </Link>
+            </button>
             <ThemeToggle />
-            <Link
-              href="/wishlist"
-              aria-label="Wishlist"
-              className={`${FOCUS_RING} hover:text-accent relative hidden h-10 w-10 place-items-center transition-colors xl:grid`}
+            <button
+              type="button"
+              onClick={openWishlist}
+              aria-label="Open wishlist"
+              className={`${FOCUS_RING} hover:text-accent relative hidden h-10 w-10 place-items-center transition-colors md:grid`}
             >
               <Heart className="h-[18px] w-[18px]" aria-hidden="true" />
               <CountBadge count={hydrated ? wishlist.length : 0} />
-            </Link>
+            </button>
+            <NotificationsBell />
             {isAdmin && (
               <Link
                 href="/admin"
@@ -304,13 +334,24 @@ export function SiteHeader({ overlay = false }: { overlay?: boolean }) {
                 <span className="hidden text-[13px] uppercase tracking-[0.12em] xl:inline">Dashboard</span>
               </Link>
             )}
-            <Link
-              href="/account"
-              aria-label="Account"
-              className={`${FOCUS_RING} hover:text-accent hidden h-10 w-10 place-items-center transition-colors sm:grid`}
-            >
-              <User className="h-[18px] w-[18px]" aria-hidden="true" />
-            </Link>
+            {isAuthenticated ? (
+              <Link
+                href="/account"
+                aria-label="Account"
+                className={`${FOCUS_RING} hover:text-accent hidden h-10 w-10 place-items-center transition-colors sm:grid`}
+              >
+                <User className="h-[18px] w-[18px]" aria-hidden="true" />
+              </Link>
+            ) : (
+              <button
+                type="button"
+                onClick={() => openAuthModal("login")}
+                aria-label="Sign in or create account"
+                className={`${FOCUS_RING} hover:text-accent hidden h-10 w-10 place-items-center transition-colors sm:grid`}
+              >
+                <User className="h-[18px] w-[18px]" aria-hidden="true" />
+              </button>
+            )}
             <CartDrawer />
           </div>
         </div>

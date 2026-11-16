@@ -6,7 +6,7 @@ import { ProductGrid } from "@/components/product/product-card";
 import { apiGetRoomBySlug } from "@/lib/api/client";
 import { mapApiProducts } from "@/lib/api/mappers";
 
-export const dynamic = "force-dynamic";
+export const revalidate = 60; // ISR: serve from Next's cache, revalidate in the background every minute
 
 export async function generateMetadata({
   params,

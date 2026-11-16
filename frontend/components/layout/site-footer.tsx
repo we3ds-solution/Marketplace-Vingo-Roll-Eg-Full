@@ -2,6 +2,7 @@
 
 import { useState, type FormEvent } from "react";
 import Link from "next/link";
+import { useConsentStore } from "@/stores/consent-store";
 import { footerColumns } from "@/lib/data/navigation";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -38,9 +39,9 @@ export function SiteFooter() {
   }
 
   return (
-    <footer className="border-border bg-card mt-24 border-t">
+    <footer className="border-border bg-card border-t">
       <div className="container-page py-16">
-        <div className="border-border grid gap-10 border-b pb-14 lg:grid-cols-[1.2fr_2fr]">
+        <div className="border-border grid gap-6 border-b pb-14 lg:grid-cols-[1.2fr_2fr] lg:gap-10">
           <div>
             <Link href="/" className="font-display text-2xl tracking-[0.2em] uppercase">
               Vingo<span className="text-accent">.</span>Roll
@@ -80,7 +81,7 @@ export function SiteFooter() {
             </form>
           </div>
 
-          <div className="grid grid-cols-2 gap-8 sm:grid-cols-3 lg:grid-cols-5">
+          <div className="grid grid-cols-2 gap-6 sm:grid-cols-3 lg:grid-cols-5">
             {footerColumns.map((col) => (
               <nav key={col.title} aria-label={col.title}>
                 <p className="eyebrow mb-4">{col.title}</p>
@@ -105,10 +106,19 @@ export function SiteFooter() {
           <p>
             © {new Date().getFullYear()} Vingo Roll. All prices indicative and for demonstration.
           </p>
-          <ul className="flex gap-5">
+          <ul className="flex flex-wrap items-center gap-5">
             <li>Instagram</li>
             <li>Pinterest</li>
             <li>Journal</li>
+            <li>
+              <button
+                type="button"
+                onClick={() => useConsentStore.getState().reopenPreferences()}
+                className="hover:text-foreground focus-visible:ring-ring transition-colors focus-visible:outline-none focus-visible:ring-2 rounded-sm"
+              >
+                Cookie preferences
+              </button>
+            </li>
           </ul>
         </div>
       </div>

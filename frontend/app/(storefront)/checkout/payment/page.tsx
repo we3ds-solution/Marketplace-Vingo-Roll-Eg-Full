@@ -69,7 +69,7 @@ export default function CheckoutPaymentPage() {
                 onClick={() => setMethod(option.value)}
                 aria-pressed={active}
                 className={cn(
-                  "flex w-full items-start gap-4 rounded-sm border p-5 text-left transition-colors",
+                  "flex w-full items-start gap-4 rounded-sm border p-5 text-start transition-colors",
                   active ? "border-accent bg-accent/5" : "border-border hover:border-accent",
                 )}
               >

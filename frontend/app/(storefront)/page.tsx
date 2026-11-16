@@ -1,3 +1,4 @@
+import type { Metadata } from "next";
 import Link from "next/link";
 import Image from "next/image";
 import { ArrowRight } from "lucide-react";
@@ -9,8 +10,15 @@ import { TrustLayer } from "@/components/common/trust-layer";
 import { apiGetCategories, apiGetProducts } from "@/lib/api/client";
 import { mapApiCategory, mapApiProducts } from "@/lib/api/mappers";
 
-// Catalog changes on every deploy/seed — keep this page dynamic.
-export const dynamic = "force-dynamic";
+// ISR: catalog pages are served from the Next.js cache and revalidate in the background every minute
+export const revalidate = 60; // ISR: serve from Next's cache, revalidate in the background every minute
+
+export const metadata: Metadata = {
+  title: "Made-to-Measure Curtains & Window Treatments in Cairo",
+  description:
+    "Curtains, roller shades, roman blinds and motorized window treatments, measured and made for your windows. Free swatches, 3–4 week delivery, 5-year hardware warranty — Cairo & Giza.",
+  alternates: { canonical: "/" },
+};
 
 export default async function HomePage() {
   const [productsResult, apiCategories] = await Promise.all([
@@ -23,7 +31,7 @@ export default async function HomePage() {
 
   return (
     <>
-      {/* Hero — full-viewport on every screen */}
+      {/* Hero â€” full-viewport on every screen */}
       <section className="relative min-h-[540px] h-[100svh]">
         <div className="relative h-full w-full overflow-hidden">
           <Image
@@ -47,7 +55,7 @@ export default async function HomePage() {
                 Light, tailored to the room it falls in.
               </h1>
               <p className="animate-fade-up mt-6 max-w-xl text-sm leading-relaxed text-white/85 md:text-base">
-                Curtains, shades and blinds cut for your windows — with swatches, measuring and
+                Curtains, shades and blinds cut for your windows â€” with swatches, measuring and
                 installation handled by people who do this every day.
               </p>
               <div className="animate-fade-up mt-9 flex flex-wrap gap-3">
@@ -77,26 +85,26 @@ export default async function HomePage() {
           action={
             <Button asChild variant="ghost">
               <Link href="/shop">
-                All treatments <ArrowRight className="ml-2 h-4 w-4" aria-hidden="true" />
+                All treatments <ArrowRight className="ms-2 h-4 w-4 rtl:-scale-x-100" aria-hidden="true" />
               </Link>
             </Button>
           }
         />
-        <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
+        <div className="grid gap-4 sm:gap-6 sm:grid-cols-2 lg:grid-cols-4">
           {heroCategories.map((cat, i) => (
             <Reveal key={cat.id} delay={i * 80}>
               <Link href={`/shop/${cat.slug}`} className="group block">
                 <div className="bg-muted relative aspect-[3/4] overflow-hidden rounded-sm">
                   <Image
                     src={cat.image}
-                    alt={`${cat.name} — ${cat.tagline}`}
+                    alt={`${cat.name} â€” ${cat.tagline}`}
                     fill
                     sizes="(min-width: 1024px) 25vw, (min-width: 640px) 50vw, 100vw"
                     quality={75}
                     className="object-cover transition-transform duration-[900ms] group-hover:scale-105"
                   />
                   <div className="veil absolute inset-0" aria-hidden="true" />
-                  <div className="absolute right-5 bottom-5 left-5">
+                  <div className="absolute inset-x-5 bottom-5">
                     <h3 className="text-lg font-semibold text-white">{cat.name}</h3>
                     <p className="mt-1 text-sm text-white/75">{cat.tagline}</p>
                   </div>
@@ -115,7 +123,7 @@ export default async function HomePage() {
           action={
             <Button asChild variant="ghost">
               <Link href="/shop">
-                All products <ArrowRight className="ml-2 h-4 w-4" aria-hidden="true" />
+                All products <ArrowRight className="ms-2 h-4 w-4 rtl:-scale-x-100" aria-hidden="true" />
               </Link>
             </Button>
           }

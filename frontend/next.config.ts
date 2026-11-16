@@ -1,10 +1,24 @@
 import type { NextConfig } from "next";
 
+// The API origin for server-side fetches and the /api/* proxy.
+// In production this is the public API host; override with API_ORIGIN if it moves.
+const apiOrigin =
+  process.env.API_ORIGIN ??
+  (process.env.NODE_ENV === "development"
+    ? "http://localhost:5000"
+    : "http://vingo-roll-api.runasp.net");
+
 const nextConfig: NextConfig = {
   reactStrictMode: true,
   poweredByHeader: false,
   compress: true,
   outputFileTracingRoot: __dirname,
+
+  // Same-origin API proxy — the browser only ever talks to the frontend
+  // origin, so the plain-HTTP API causes no mixed-content or CORS issues.
+  async rewrites() {
+    return [{ source: "/api/:path*", destination: `${apiOrigin}/api/:path*` }];
+  },
 
   // Image optimization
   images: {

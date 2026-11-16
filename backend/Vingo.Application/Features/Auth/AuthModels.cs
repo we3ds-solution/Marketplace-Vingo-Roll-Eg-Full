@@ -3,7 +3,10 @@ namespace Vingo.Application.Features.Auth;
 public record RegisterRequest(
     string Email,
     string Password,
-    string DisplayName
+    string DisplayName,
+    string? AccountType = null,
+    string? CompanyName = null,
+    string? Message = null
 );
 
 public record LoginRequest(
@@ -15,7 +18,8 @@ public record AuthUserDto(
     Guid Id,
     string Email,
     string DisplayName,
-    string[] Roles
+    string[] Roles,
+    string? VendorApplicationStatus = null
 );
 
 public record AuthResponseDto(

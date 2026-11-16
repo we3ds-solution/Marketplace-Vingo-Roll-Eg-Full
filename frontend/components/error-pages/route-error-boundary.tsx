@@ -43,7 +43,7 @@ export function RouteErrorBoundary({
           </p>
         </div>
 
-        <div className="bg-card border border-border/50 rounded-lg p-4 text-left">
+        <div className="bg-card border border-border/50 rounded-lg p-4 text-start">
           <p className="text-xs font-mono text-destructive break-all">{error.message}</p>
         </div>
 

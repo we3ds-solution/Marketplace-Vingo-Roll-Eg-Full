@@ -325,7 +325,7 @@ export function ProductForm({
   const field = (name: string) => (errors[name] ? "border-destructive" : "");
 
   return (
-    <form onSubmit={handleSubmit} className="grid gap-8 xl:grid-cols-[1.5fr_1fr]">
+    <form onSubmit={handleSubmit} className="grid gap-6 xl:gap-8 xl:grid-cols-[1.5fr_1fr]">
       {/* Left column — core details */}
       <div className="space-y-5">
         <section className="bg-card border-border rounded-sm border p-6">
@@ -545,7 +545,7 @@ export function ProductForm({
               />
               <Button type="button" variant="outline" onClick={() => addImage.mutate()} disabled={addImage.isPending}>
                 <ImagePlus className="h-4 w-4" aria-hidden="true" />
-                <span className="sr-only sm:not-sr-only sm:ml-1.5">Add</span>
+                <span className="sr-only sm:not-sr-only sm:ms-1.5">Add</span>
               </Button>
             </div>
             <Input

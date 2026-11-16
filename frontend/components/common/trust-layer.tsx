@@ -1,5 +1,8 @@
 import { Ruler, Truck, Shield, Palette } from "lucide-react";
 import Link from "next/link";
+import { Card, CardIconRow } from "@/components/ui/card";
+import { Section } from "@/components/common/section";
+
 const items = [
   {
     icon: Palette,
@@ -32,23 +35,30 @@ const items = [
 ];
 
 export function TrustLayer({ compact = false }: { compact?: boolean }) {
-  return (
-    <ul
-      className={compact ? "grid gap-4 sm:grid-cols-2" : "grid gap-6 sm:grid-cols-2 lg:grid-cols-4"}
-    >
+  const gridClass = compact
+    ? "grid gap-4 sm:grid-cols-2"
+    : "grid gap-4 sm:grid-cols-2 sm:gap-6 lg:grid-cols-4";
+
+  const list = (
+    <ul className={gridClass}>
       {items.map(({ icon: Icon, ...item }) => (
-        <li key={item.title} className="border-border bg-card/60 rounded-sm border p-5">
-          <Icon className="text-accent h-5 w-5" aria-hidden="true" />
-          <h3 className="font-sans mt-3 text-sm font-medium">{item.title}</h3>
-          <p className="text-muted-foreground mt-1.5 text-xs leading-relaxed">{item.body}</p>
-          <Link
-            href={item.to}
-            className="text-accent mt-3 inline-block text-xs underline underline-offset-4"
-          >
-            {item.cta}
-          </Link>
+        <li key={item.title}>
+          <Card className="hover:border-accent/60 flex h-full flex-col gap-3 p-5 transition-colors sm:p-6">
+            <CardIconRow icon={Icon} title={item.title} />
+            <p className="text-muted-foreground text-xs leading-relaxed">{item.body}</p>
+            <Link
+              href={item.to}
+              className="text-accent focus-visible:ring-ring mt-auto inline-flex w-fit items-center gap-1 rounded-sm pt-1 text-xs underline underline-offset-4 focus-visible:outline-none focus-visible:ring-2"
+            >
+              {item.cta}
+            </Link>
+          </Card>
         </li>
       ))}
     </ul>
   );
+
+  // Compact (product detail): bare list, no section chrome.
+  // Default: own section so position/rhythm matches every other page section.
+  return compact ? list : <Section>{list}</Section>;
 }

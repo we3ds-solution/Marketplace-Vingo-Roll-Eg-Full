@@ -42,7 +42,7 @@ export function ErrorPage({
             style={{ animation: "fadeUpStagger 0.7s ease-out 400ms both" }}
           >
             <Button onClick={onReset} className="px-8 py-3 text-base font-semibold">
-              <RotateCw className="h-4 w-4 mr-2" />
+              <RotateCw className="h-4 w-4 me-2" />
               Try Again
             </Button>
             <Button
@@ -57,7 +57,7 @@ export function ErrorPage({
           {/* Error Details (Development Only) */}
           {isDev && error && (
             <div
-              className="mt-8 text-left bg-muted/50 border border-destructive/30 rounded-lg p-4 space-y-2 max-w-xl"
+              className="mt-8 text-start bg-muted/50 border border-destructive/30 rounded-lg p-4 space-y-2 max-w-xl"
               style={{ animation: "fadeUpStagger 0.7s ease-out 500ms both" }}
             >
               <p className="font-semibold text-sm text-destructive mb-3">Error Details</p>

@@ -2,6 +2,8 @@
 
 import Link from "next/link";
 import { useState } from "react";
+import { useSearchParams } from "next/navigation";
+import { X } from "lucide-react";
 import { Crumbs, PageHeader, Section } from "@/components/common/section";
 import { ProductGrid } from "@/components/product/product-card";
 import { FilterSidebar } from "@/components/shop/filter-sidebar";
@@ -25,7 +27,31 @@ export function ShopContent({
   crumbs?: Array<{ label: string; href?: string }>;
 }) {
   const [filters, setFilters] = useState<FilterState>(FILTER_DEFAULTS);
-  const filteredProducts = useProductFilters(products, filters);
+  const searchParams = useSearchParams();
+  const searchQuery = (searchParams.get("search") ?? "").trim().toLowerCase();
+  const needParam = searchParams.get("need") ?? "";
+
+  const baseFiltered = useProductFilters(products, filters);
+  const filteredProducts = baseFiltered.filter((product) => {
+    if (searchQuery) {
+      const haystack = [
+        product.name,
+        product.shortDescription,
+        product.category?.name ?? "",
+        ...(product.styles ?? []),
+      ]
+        .join(" ")
+        .toLowerCase();
+      if (!haystack.includes(searchQuery)) return false;
+    }
+
+    if (needParam) {
+      const slugs = (product.needs ?? []).map((n) => (typeof n === "string" ? n : n.slug));
+      if (!slugs.includes(needParam)) return false;
+    }
+
+    return true;
+  });
 
   return (
     <>
@@ -47,6 +73,27 @@ export function ShopContent({
         </div>
       </PageHeader>
       <Section>
+        {(searchQuery || needParam) && (
+          <div className="mb-6 flex flex-wrap items-center gap-2">
+            <span className="text-muted-foreground text-xs">Filtering by:</span>
+            {searchQuery && (
+              <span className="bg-muted inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-xs">
+                “{searchQuery}”
+                <Link href="/shop" aria-label="Clear search filter" className="hover:text-foreground">
+                  <X className="h-3 w-3" aria-hidden="true" />
+                </Link>
+              </span>
+            )}
+            {needParam && (
+              <span className="bg-muted inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-xs">
+                Need: {needParam}
+                <Link href="/shop" aria-label="Clear need filter" className="hover:text-foreground">
+                  <X className="h-3 w-3" aria-hidden="true" />
+                </Link>
+              </span>
+            )}
+          </div>
+        )}
         <div className="mb-6 flex items-center justify-between gap-4 lg:hidden">
           <p className="text-muted-foreground text-sm">{filteredProducts.length} products</p>
           <Sheet>
@@ -71,7 +118,7 @@ export function ShopContent({
           </Sheet>
         </div>
 
-        <div className="grid gap-8 lg:grid-cols-[280px_1fr]">
+        <div className="grid gap-6 lg:gap-8 lg:grid-cols-[280px_1fr]">
           <aside className="hidden lg:block">
             <FilterSidebar
               filters={filters}

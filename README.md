@@ -28,7 +28,7 @@ Marketplace-Vingo-Roll-Eg-Full/
 │   ├── DATABASE.md
 │   └── API.md
 │
-└── _old-react-app/    # Archived TanStack Start app
+├── docker/            # Deployment assets
 ```
 
 ---

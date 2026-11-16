@@ -159,7 +159,7 @@ function ErrorBoundaryFallback({
             style={{ animation: "fadeUpStagger 0.7s ease-out 400ms both" }}
           >
             <Button onClick={onRetry} className="px-8 py-3 text-base font-semibold">
-              <RotateCw className="h-4 w-4 mr-2" />
+              <RotateCw className="h-4 w-4 me-2" />
               Try Again
             </Button>
             <Button
@@ -194,7 +194,7 @@ function ErrorBoundaryFallback({
 
               {/* Expandable Details Panel */}
               {isDetailsExpanded && (
-                <div className="bg-muted/50 border border-border/30 rounded-lg p-4 space-y-3 text-left max-h-96 overflow-y-auto">
+                <div className="bg-muted/50 border border-border/30 rounded-lg p-4 space-y-3 text-start max-h-96 overflow-y-auto">
                   {/* Error Name */}
                   <div>
                     <p className="text-xs font-semibold text-destructive mb-1">Error Type</p>

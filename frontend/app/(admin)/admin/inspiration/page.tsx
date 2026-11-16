@@ -44,7 +44,7 @@ export default function AdminInspirationPage() {
         action={
           <Button asChild size="sm">
             <Link href="/admin/inspiration/new">
-              <Plus className="mr-1.5 h-4 w-4" aria-hidden="true" />
+              <Plus className="me-1.5 h-4 w-4" aria-hidden="true" />
               New story
             </Link>
           </Button>
@@ -64,7 +64,7 @@ export default function AdminInspirationPage() {
             <AdminTh>Sections</AdminTh>
             <AdminTh>Products</AdminTh>
             <AdminTh>Status</AdminTh>
-            <AdminTh className="w-20 text-right">Edit</AdminTh>
+            <AdminTh className="w-20 text-end">Edit</AdminTh>
           </AdminTHead>
           <tbody>
             {data.map((s) => (
@@ -78,7 +78,7 @@ export default function AdminInspirationPage() {
                 <AdminTd>{s.sectionCount}</AdminTd>
                 <AdminTd>{s.productCount}</AdminTd>
                 <AdminTd><AdminBadge tone={s.isPublished ? "green" : "amber"}>{s.isPublished ? "Published" : "Draft"}</AdminBadge></AdminTd>
-                <AdminTd className="text-right">
+                <AdminTd className="text-end">
                   <Link href={`/admin/inspiration/${s.id}`} className="text-muted-foreground hover:text-accent inline-grid h-8 w-8 place-items-center rounded-sm" aria-label="Edit">
                     <Pencil className="h-4 w-4" aria-hidden="true" />
                   </Link>

@@ -12,7 +12,7 @@ import {
   mapRelatedProductToProduct,
 } from "@/lib/api/mappers";
 
-export const dynamic = "force-dynamic";
+export const revalidate = 60; // ISR: serve from Next's cache, revalidate in the background every minute
 
 export async function generateMetadata({
   params,
@@ -91,7 +91,7 @@ export default async function InspirationPostPage({
       )}
       <Section>
         <SectionHeading eyebrow="Related" title="More inspiration" />
-        <div className="grid gap-6 md:grid-cols-2">
+        <div className="grid gap-4 sm:gap-6 md:grid-cols-2">
           {related.map((p) => (
             <Link key={p.id} href={`/inspiration/${p.slug}`} className="group block">
               <div className="bg-muted relative aspect-[16/10] overflow-hidden rounded-sm">

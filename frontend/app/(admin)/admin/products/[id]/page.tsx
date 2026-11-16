@@ -22,7 +22,7 @@ export default function AdminEditProductPage() {
     <>
       <div className="mb-4">
         <Link href="/admin/products" className="text-muted-foreground hover:text-foreground inline-flex items-center gap-1.5 text-sm">
-          <ArrowLeft className="h-4 w-4" aria-hidden="true" />
+          <ArrowLeft className="h-4 w-4 rtl:-scale-x-100" aria-hidden="true" />
           Products
         </Link>
       </div>

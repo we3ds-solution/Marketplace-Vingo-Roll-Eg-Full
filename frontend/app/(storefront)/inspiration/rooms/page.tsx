@@ -11,7 +11,7 @@ export const metadata: Metadata = {
   description: "Browse window treatments by the space they belong in.",
 };
 
-export const dynamic = "force-dynamic";
+export const revalidate = 60; // ISR: serve from Next's cache, revalidate in the background every minute
 
 export default async function InspirationRoomsPage() {
   const rooms = (await apiGetRooms()).map(mapApiRoom);
@@ -29,7 +29,7 @@ export default async function InspirationRoomsPage() {
         description="Browse window treatments by the space they belong in."
       />
       <Section>
-        <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+        <div className="grid gap-4 sm:gap-6 md:grid-cols-2 lg:grid-cols-3">
           {rooms.map((room, i) => (
             <Reveal key={room.id} delay={i * 70}>
               <Link href={`/inspiration/rooms/${room.slug}`} className="group block">

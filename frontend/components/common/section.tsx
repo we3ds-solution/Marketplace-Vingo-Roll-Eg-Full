@@ -1,6 +1,7 @@
 import type { ReactNode } from "react";
 import Link from "next/link";
 import { cn } from "@/lib/utils";
+import { JsonLd } from "@/components/seo/json-ld";
 
 export function Section({
   children,
@@ -12,7 +13,7 @@ export function Section({
   id?: string;
 }) {
   return (
-    <section id={id} className={cn("py-16 md:py-24", className)}>
+    <section id={id} className={cn("py-14 md:py-20", className)}>
       <div className="container-page">{children}</div>
     </section>
   );
@@ -78,8 +79,23 @@ export function PageHeader({
 }
 
 export function Crumbs({ items }: { items: { label: string; href?: string }[] }) {
+  const baseUrl = "https://vingoroll.com";
+  const trail = items.map((item, i) => ({
+    "@type": "ListItem" as const,
+    position: i + 1,
+    name: item.label,
+    ...(item.href ? { item: `${baseUrl}${item.href}` } : {}),
+  }));
+
   return (
     <nav aria-label="Breadcrumb" className="container-page pt-6">
+      <JsonLd
+        data={{
+          "@context": "https://schema.org",
+          "@type": "BreadcrumbList",
+          itemListElement: trail,
+        }}
+      />
       <ol className="text-muted-foreground flex flex-wrap items-center gap-2 text-xs">
         {items.map((item, i) => (
           <li key={item.label} className="flex items-center gap-2">

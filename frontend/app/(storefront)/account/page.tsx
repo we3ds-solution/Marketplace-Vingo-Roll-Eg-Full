@@ -1,12 +1,13 @@
-﻿"use client";
+"use client";
 
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { Crumbs, PageHeader, Section, EmptyState } from "@/components/common/section";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/lib/auth/auth-context";
+import { useUIStore } from "@/stores/ui-store";
 import { formatPrice } from "@/lib/utils";
-import { LogOut, Package, ShieldCheck, User } from "lucide-react";
+import { LogOut, Package, ShieldCheck, User, Store, Clock3, XCircle } from "lucide-react";
 
 type MyOrder = {
   id: string;
@@ -19,6 +20,8 @@ type MyOrder = {
 
 export default function AccountPage() {
   const { user, status, isAdmin, signOut, authedFetch } = useAuth();
+  const isVendor = user?.roles.includes("Vendor") ?? false;
+  const vendorStatus = user?.vendorApplicationStatus ?? null;
   const [orders, setOrders] = useState<MyOrder[] | null>(null);
 
   useEffect(() => {
@@ -65,12 +68,8 @@ export default function AccountPage() {
               description="Create an account to link orders and wishlists to you — or sign in if you already have one."
               action={
                 <div className="flex flex-wrap gap-2">
-                  <Button asChild>
-                    <Link href="/register">Create account</Link>
-                  </Button>
-                  <Button asChild variant="outline">
-                    <Link href="/login">Sign in</Link>
-                  </Button>
+                  <Button onClick={() => useUIStore.getState().openAuthModal("register")}>Create account</Button>
+                  <Button variant="outline" onClick={() => useUIStore.getState().openAuthModal("login")}>Sign in</Button>
                 </div>
               }
             />
@@ -89,7 +88,7 @@ export default function AccountPage() {
         description="Your profile, orders and saved designs."
       />
       <Section>
-        <div className="grid gap-8 lg:grid-cols-3">
+        <div className="grid gap-6 lg:grid-cols-3">
           {/* Profile */}
           <div className="bg-card border-border rounded-sm border p-6">
             <div className="flex items-center gap-4">
@@ -107,6 +106,15 @@ export default function AccountPage() {
                 <dt className="text-muted-foreground">Account</dt>
                 <dd>Customer</dd>
               </div>
+              {isVendor && (
+                <div className="flex justify-between">
+                  <dt className="text-muted-foreground">Role</dt>
+                  <dd className="flex items-center gap-1 text-accent">
+                    <Store className="h-4 w-4" aria-hidden="true" />
+                    Vendor
+                  </dd>
+                </div>
+              )}
               {isAdmin && (
                 <div className="flex justify-between">
                   <dt className="text-muted-foreground">Role</dt>
@@ -118,23 +126,46 @@ export default function AccountPage() {
               )}
             </dl>
 
+            {vendorStatus === "Pending" && (
+              <div className="mt-4 flex items-start gap-3 rounded-sm border border-amber-500/30 bg-amber-500/10 p-3 text-xs leading-relaxed text-amber-700 dark:text-amber-300">
+                <Clock3 className="mt-0.5 h-4 w-4 shrink-0" aria-hidden="true" />
+                <span>
+                  <span className="font-semibold">Vendor application under review.</span> Our trade desk approves
+                  applications within 1–2 business days — we&apos;ll send you an in-app message and upgrade your
+                  account when it&apos;s approved.
+                </span>
+              </div>
+            )}
+
+            {vendorStatus === "Rejected" && (
+              <div className="mt-4 flex items-start gap-3 rounded-sm border border-destructive/30 bg-destructive/10 p-3 text-xs leading-relaxed text-destructive">
+                <XCircle className="mt-0.5 h-4 w-4 shrink-0" aria-hidden="true" />
+                <span>
+                  <span className="font-semibold">Vendor application not approved.</span> Contact the studio if you
+                  believe this is a mistake.
+                </span>
+              </div>
+            )}
+
             <div className="mt-6 flex flex-col gap-2">
               {isAdmin && (
                 <Button asChild variant="secondary" className="justify-start">
                   <Link href="/admin">
-                    <ShieldCheck className="mr-2 h-4 w-4" aria-hidden="true" />
+                    <ShieldCheck className="me-2 h-4 w-4" aria-hidden="true" />
                     Open admin dashboard
                   </Link>
                 </Button>
               )}
-              <Button asChild variant="outline" className="justify-start">
-                <Link href="/wishlist">
-                  <Package className="mr-2 h-4 w-4" aria-hidden="true" />
-                  View wishlist
-                </Link>
-              </Button>
+              <button
+                type="button"
+                onClick={() => useUIStore.getState().openWishlist()}
+                className="border-border hover:border-accent inline-flex w-full items-center justify-start gap-2 rounded-sm border px-4 py-2 text-sm transition-colors"
+              >
+                <Package className="me-2 h-4 w-4" aria-hidden="true" />
+                View wishlist
+              </button>
               <Button variant="ghost" className="justify-start" onClick={() => void signOut()}>
-                <LogOut className="mr-2 h-4 w-4" aria-hidden="true" />
+                <LogOut className="me-2 h-4 w-4" aria-hidden="true" />
                 Sign out
               </Button>
             </div>
@@ -174,7 +205,7 @@ export default function AccountPage() {
                         · {order.itemCount} item{order.itemCount === 1 ? "" : "s"}
                       </p>
                     </div>
-                    <div className="text-right">
+                    <div className="text-end">
                       <p className="font-medium">{formatPrice(order.totalAmount)}</p>
                       <p className="text-muted-foreground text-xs">{order.status}</p>
                     </div>

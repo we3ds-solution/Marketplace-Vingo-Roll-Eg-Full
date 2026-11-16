@@ -1,4 +1,5 @@
 using Microsoft.EntityFrameworkCore;
+using Vingo.Domain.Entities.Account;
 using Vingo.Domain.Entities.Catalog;
 using Vingo.Domain.Entities.Content;
 using Vingo.Domain.Entities.Marketing;
@@ -39,6 +40,9 @@ public interface IApplicationDbContext
     // Marketing
     DbSet<Lead> Leads { get; }
     DbSet<NewsletterSubscriber> NewsletterSubscribers { get; }
+
+    DbSet<VendorApplication> VendorApplications { get; }
+    DbSet<AppNotification> AppNotifications { get; }
 
     Task<int> SaveChangesAsync(CancellationToken cancellationToken = default);
 }

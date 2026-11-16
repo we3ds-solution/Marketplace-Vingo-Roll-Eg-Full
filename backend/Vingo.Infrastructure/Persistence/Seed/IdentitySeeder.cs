@@ -21,7 +21,7 @@ public static class IdentitySeeder
         var roleManager = services.GetRequiredService<RoleManager<IdentityRole<Guid>>>();
         var userManager = services.GetRequiredService<UserManager<VingoUser>>();
 
-        foreach (var role in new[] { "Admin", "Customer" })
+        foreach (var role in new[] { "Admin", "Customer", "Vendor" })
         {
             if (!await roleManager.RoleExistsAsync(role))
             {

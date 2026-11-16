@@ -92,7 +92,7 @@ export default function AdminOrdersPage() {
               <AdminTh>Order</AdminTh>
               <AdminTh>Customer</AdminTh>
               <AdminTh>Items</AdminTh>
-              <AdminTh className="text-right">Total</AdminTh>
+              <AdminTh className="text-end">Total</AdminTh>
               <AdminTh>Placed</AdminTh>
               <AdminTh>Status</AdminTh>
             </AdminTHead>
@@ -107,7 +107,7 @@ export default function AdminOrdersPage() {
                     <p className="text-muted-foreground text-xs">{o.customerEmail}</p>
                   </AdminTd>
                   <AdminTd>{o.itemCount}</AdminTd>
-                  <AdminTd className="text-right tabular-nums">{formatPrice(o.totalAmount)}</AdminTd>
+                  <AdminTd className="text-end tabular-nums">{formatPrice(o.totalAmount)}</AdminTd>
                   <AdminTd className="text-muted-foreground text-xs">
                     {new Date(o.createdAt).toLocaleDateString("en-US", { month: "short", day: "numeric" })}
                   </AdminTd>

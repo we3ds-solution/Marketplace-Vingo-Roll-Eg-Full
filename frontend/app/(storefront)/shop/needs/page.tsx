@@ -22,7 +22,7 @@ export const metadata: Metadata = {
   description: "Find treatments by the problem they solve.",
 };
 
-export const dynamic = "force-dynamic";
+export const revalidate = 60; // ISR: serve from Next's cache, revalidate in the background every minute
 
 const needIcons: Record<string, LucideIcon> = {
   moon: Moon,
@@ -54,13 +54,13 @@ export default async function ShopByNeedsPage() {
         description="Find treatments by the problem they solve."
       />
       <Section>
-        <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+        <div className="grid gap-4 sm:gap-6 md:grid-cols-2 lg:grid-cols-3">
           {needs.map((need, i) => {
             const Icon = needIcons[need.icon] ?? Sun;
             return (
               <Reveal key={need.id} delay={i * 70}>
                 <Link
-                  href={`/search?need=${need.slug}`}
+                  href={`/shop?need=${need.slug}`}
                   className="group border-border bg-card/60 flex h-full flex-col rounded-sm border p-6 transition-colors hover:border-accent"
                 >
                   <span className="bg-accent/10 text-accent grid h-12 w-12 place-items-center rounded-sm">

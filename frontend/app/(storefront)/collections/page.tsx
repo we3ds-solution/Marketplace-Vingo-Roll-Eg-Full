@@ -11,7 +11,7 @@ export const metadata: Metadata = {
   description: "Six points of view on the same question: how should this room hold light?",
 };
 
-export const dynamic = "force-dynamic";
+export const revalidate = 60; // ISR: serve from Next's cache, revalidate in the background every minute
 
 export default async function CollectionsPage() {
   const collections = (await apiGetCollections()).map(mapApiCollection);
@@ -25,7 +25,7 @@ export default async function CollectionsPage() {
         description="Six points of view on the same question: how should this room hold light?"
       />
       <Section>
-        <div className="grid gap-8 md:grid-cols-2">
+        <div className="grid gap-4 sm:gap-6 md:grid-cols-2">
           {collections.map((c, i) => (
             <Reveal key={c.id} delay={i * 70}>
               <Link href={`/collections/${c.slug}`} className="group block">

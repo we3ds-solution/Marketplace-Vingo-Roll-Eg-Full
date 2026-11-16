@@ -59,7 +59,7 @@ export default function AdminReviewsPage() {
             <AdminTh>Product</AdminTh>
             <AdminTh>Author</AdminTh>
             <AdminTh>Excerpt</AdminTh>
-            <AdminTh className="w-20 text-right">Delete</AdminTh>
+            <AdminTh className="w-20 text-end">Delete</AdminTh>
           </AdminTHead>
           <tbody>
             {data.map((r) => (
@@ -80,7 +80,7 @@ export default function AdminReviewsPage() {
                   <p className="font-medium">{r.title}</p>
                   <p className="text-muted-foreground mt-0.5 text-xs">{r.body}</p>
                 </AdminTd>
-                <AdminTd className="text-right">
+                <AdminTd className="text-end">
                   <button
                     type="button"
                     onClick={() => {

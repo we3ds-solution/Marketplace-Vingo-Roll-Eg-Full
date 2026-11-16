@@ -35,7 +35,7 @@ function MenuLink({ link }: { link: MegaMenuLink }) {
   return (
     <Link
       href={linkHref(link)}
-      className="text-muted-foreground hover:text-foreground focus-visible:text-accent focus-visible:outline-none rounded-sm transition-all duration-200 ease-out hover:translate-x-1 focus-visible:ring-2 focus-visible:ring-ring text-sm"
+      className="text-muted-foreground hover:text-foreground focus-visible:text-accent focus-visible:outline-none rounded-sm transition-all duration-200 ease-out hover:translate-x-1 rtl:hover:-translate-x-1 focus-visible:ring-2 focus-visible:ring-ring text-sm"
     >
       {link.label}
     </Link>

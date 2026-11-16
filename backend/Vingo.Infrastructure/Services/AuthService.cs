@@ -60,6 +60,28 @@ public class AuthService : IAuthService
         }
 
         await _userManager.AddToRoleAsync(user, "Customer");
+
+        // Vendor registration = role stays Customer until an admin approves the application
+        var isVendorRequest = string.Equals(request.AccountType, "vendor", StringComparison.OrdinalIgnoreCase);
+        if (isVendorRequest)
+        {
+            if (string.IsNullOrWhiteSpace(request.CompanyName))
+            {
+                throw new ValidationException(new[]
+                {
+                    new ValidationFailure("companyName", "Tell us your company name to apply as a vendor")
+                });
+            }
+
+            var application = new Domain.Entities.Account.VendorApplication(
+                user.Id,
+                request.CompanyName,
+                request.Message ?? string.Empty);
+
+            _context.VendorApplications.Add(application);
+            await _context.SaveChangesAsync(cancellationToken);
+        }
+
         return await IssueTokensAsync(user, ipAddress, cancellationToken);
     }
 
@@ -155,7 +177,18 @@ public class AuthService : IAuthService
         }
 
         var roles = await _userManager.GetRolesAsync(user);
-        return new AuthUserDto(user.Id, user.Email!, user.DisplayName, roles.ToArray());
+        var applicationStatus = await GetVendorApplicationStatusAsync(userId, cancellationToken);
+        return new AuthUserDto(user.Id, user.Email!, user.DisplayName, roles.ToArray(), applicationStatus);
+    }
+
+    private async Task<string?> GetVendorApplicationStatusAsync(Guid userId, CancellationToken cancellationToken)
+    {
+        return await _context.VendorApplications
+            .AsNoTracking()
+            .Where(v => v.UserId == userId)
+            .OrderByDescending(v => v.CreatedAt)
+            .Select(v => v.Status.ToString())
+            .FirstOrDefaultAsync(cancellationToken);
     }
 
     private async Task<(AuthResponseDto Response, string RefreshToken)> IssueTokensAsync(Identity.VingoUser user, string? ipAddress, CancellationToken cancellationToken)
@@ -173,9 +206,10 @@ public class AuthService : IAuthService
     private async Task<(AuthResponseDto Response, string RefreshToken)> BuildAuthResponseAsync(Identity.VingoUser user, string refreshToken, CancellationToken cancellationToken)
     {
         var roles = await _userManager.GetRolesAsync(user);
+        var applicationStatus = await GetVendorApplicationStatusAsync(user.Id, cancellationToken);
 
         var accessToken = _jwt.GenerateAccessToken(user.Id, user.Email!, user.DisplayName, roles);
-        var authUser = new AuthUserDto(user.Id, user.Email!, user.DisplayName, roles.ToArray());
+        var authUser = new AuthUserDto(user.Id, user.Email!, user.DisplayName, roles.ToArray(), applicationStatus);
 
         return (new AuthResponseDto(accessToken, _jwt.AccessTokenMinutes, authUser), refreshToken);
     }

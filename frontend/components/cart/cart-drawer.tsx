@@ -44,7 +44,7 @@ export function CartDrawer() {
         >
           <ShoppingBag className="h-[18px] w-[18px]" aria-hidden="true" />
           {hydrated && count > 0 && (
-            <span className="bg-accent text-accent-foreground absolute -top-0.5 -right-0.5 grid h-4 min-w-4 place-items-center rounded-full px-1 text-[10px] leading-none">
+            <span className="bg-accent text-accent-foreground absolute -top-0.5 -end-0.5 grid h-4 min-w-4 place-items-center rounded-full px-1 text-[10px] leading-none">
               {count}
             </span>
           )}
@@ -122,7 +122,7 @@ export function CartDrawer() {
                         </div>
 
                         {/* Price */}
-                        <span className="text-sm font-semibold ml-auto">
+                        <span className="text-sm font-semibold ms-auto">
                           {formatPrice(item.unitPrice * item.quantity)}
                         </span>
                       </div>

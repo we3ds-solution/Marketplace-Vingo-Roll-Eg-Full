@@ -4,6 +4,7 @@ import Link from "next/link";
 import { Search, MessageCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
+import { useUIStore } from "@/stores/ui-store";
 
 /**
  * Kinetic 404 Numerals
@@ -139,20 +140,20 @@ export function NotFoundPage() {
             style={{ animation: "fadeUpStagger 0.7s ease-out 500ms both" }}
           >
             <div className="relative flex-1">
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+              <Search className="absolute start-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
               <input
                 type="text"
                 placeholder="Search treatments, styles, rooms..."
                 className={cn(
-                  "w-full pl-10 pr-4 py-3 rounded-full",
+                  "w-full ps-10 pe-4 py-3 rounded-full",
                   "bg-card border border-border/50",
                   "text-foreground placeholder:text-muted-foreground",
                   "focus:outline-none focus:ring-2 focus:ring-accent focus:border-transparent",
                   "transition-all",
                 )}
                 onClick={() => {
-                  // Navigate to search on click
-                  window.location.href = "/search";
+                  // Open the search palette
+                  useUIStore.getState().openSearch();
                 }}
               />
             </div>
@@ -168,7 +169,7 @@ export function NotFoundPage() {
             </Button>
             <Button asChild variant="outline" className="px-8 py-3 text-base font-semibold">
               <Link href="/contact">
-                <MessageCircle className="h-4 w-4 mr-2" />
+                <MessageCircle className="h-4 w-4 me-2" />
                 Get Help
               </Link>
             </Button>

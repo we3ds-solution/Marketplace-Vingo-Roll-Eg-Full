@@ -160,7 +160,7 @@ export function ProductQuickViewModal({ product, open, onOpenChange }: QuickView
                           >
                             {material.name}
                             {material.priceDelta > 0 && (
-                              <span className="text-xs ml-1">
+                              <span className="text-xs ms-1">
                                 +{formatPrice(material.priceDelta)}
                               </span>
                             )}
@@ -216,7 +216,7 @@ export function ProductQuickViewModal({ product, open, onOpenChange }: QuickView
                           >
                             {size.label}
                             {size.priceDelta > 0 && (
-                              <span className="text-xs ml-1">+{formatPrice(size.priceDelta)}</span>
+                              <span className="text-xs ms-1">+{formatPrice(size.priceDelta)}</span>
                             )}
                           </button>
                         ))}

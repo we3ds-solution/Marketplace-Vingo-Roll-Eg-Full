@@ -4,8 +4,8 @@ import { apiGetCategories, apiGetProducts } from "@/lib/api/client";
 import { mapApiCategory, mapApiProducts } from "@/lib/api/mappers";
 import { ShopContent } from "@/components/shop/shop-content";
 
-// Catalog changes on every deploy/seed — keep this page dynamic.
-export const dynamic = "force-dynamic";
+// ISR: catalog pages are served from the Next.js cache and revalidate in the background every minute
+export const revalidate = 60; // ISR: serve from Next's cache, revalidate in the background every minute
 
 type Params = { category: string };
 

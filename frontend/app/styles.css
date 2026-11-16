@@ -346,8 +346,68 @@
   }
 }
 
+@keyframes vr-toast-in {
+  from {
+    opacity: 0;
+    transform: translate3d(0, 64px, 0);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@keyframes vr-toast-out {
+  from {
+    opacity: 1;
+    transform: none;
+  }
+  to {
+    opacity: 0;
+    transform: translate3d(0, 48px, 0);
+  }
+}
+
+@keyframes vr-scroll-btn-in {
+  from {
+    opacity: 0;
+    transform: scale(0.6) translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@keyframes vr-scroll-btn-out {
+  from {
+    opacity: 1;
+    transform: none;
+  }
+  to {
+    opacity: 0;
+    transform: scale(0.6) translateY(12px);
+  }
+}
+
 @utility animate-menu-in {
   animation: vr-menu-in 0.24s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+@utility animate-toast-in {
+  animation: vr-toast-in 0.38s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+@utility animate-toast-out {
+  animation: vr-toast-out 0.28s ease-in both;
+}
+
+@utility animate-scroll-btn-in {
+  animation: vr-scroll-btn-in 0.28s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+@utility animate-scroll-btn-out {
+  animation: vr-scroll-btn-out 0.22s ease-in both;
 }
 
 @utility animate-fade-in {

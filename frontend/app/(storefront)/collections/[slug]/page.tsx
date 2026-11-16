@@ -8,7 +8,7 @@ import { Button } from "@/components/ui/button";
 import { apiGetCollectionBySlug, apiGetInspirationStories } from "@/lib/api/client";
 import { mapApiProducts, mapApiStory } from "@/lib/api/mappers";
 
-export const dynamic = "force-dynamic";
+export const revalidate = 60; // ISR: serve from Next's cache, revalidate in the background every minute
 
 export async function generateMetadata({
   params,
@@ -82,7 +82,7 @@ export default async function CollectionPage({
       </Section>
       <Section>
         <SectionHeading eyebrow="Related" title="Rooms in this spirit" />
-        <div className="grid gap-6 md:grid-cols-2">
+        <div className="grid gap-4 sm:gap-6 md:grid-cols-2">
           {related.map((post) => (
             <Link
               key={post.id}

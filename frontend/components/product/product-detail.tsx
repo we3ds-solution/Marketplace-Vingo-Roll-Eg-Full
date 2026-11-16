@@ -71,7 +71,7 @@ export function ProductDetail({
           { label: product.name },
         ]}
       />
-      <div className="container-page grid gap-12 py-10 lg:grid-cols-2">
+      <div className="container-page grid gap-6 py-10 md:py-14 lg:gap-10 lg:grid-cols-2">
         <div>
           <div className="bg-muted relative aspect-[4/5] overflow-hidden rounded-sm">
             <Image
@@ -261,7 +261,7 @@ export function ProductDetail({
                 aria-pressed={hydrated && saved}
               >
                 <Heart
-                  className={cn("mr-2 h-4 w-4", hydrated && saved && "fill-current")}
+                  className={cn("me-2 h-4 w-4", hydrated && saved && "fill-current")}
                   aria-hidden="true"
                 />{" "}
                 {hydrated && saved ? "Saved" : "Save"}
@@ -334,7 +334,7 @@ export function ProductDetail({
             <Accordion type="single" collapsible className="max-w-3xl">
               {faqs.slice(0, 5).map((f) => (
                 <AccordionItem key={f.question} value={f.question}>
-                  <AccordionTrigger className="text-left">{f.question}</AccordionTrigger>
+                  <AccordionTrigger className="text-start">{f.question}</AccordionTrigger>
                   <AccordionContent className="text-muted-foreground leading-relaxed">
                     {f.answer}
                   </AccordionContent>

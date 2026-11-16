@@ -27,7 +27,21 @@ import type {
   Paginated,
 } from "./types";
 
-const API_URL = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:5000";
+/**
+ * Server-side code fetches the API directly (absolute origin) via
+ * API_ORIGIN. The browser always uses same-origin relative "/api/*", which
+ * next.config.ts rewrites to the API — cookies stay first-party and no
+ * mixed-content or CORS issues arise on a plain-HTTP API behind an HTTPS
+ * page.
+ */
+const API_URL =
+  typeof window === "undefined"
+    ? (process.env.API_ORIGIN ??
+      process.env.NEXT_PUBLIC_API_URL ??
+      (process.env.NODE_ENV === "development"
+        ? "http://localhost:5000"
+        : "http://vingo-roll-api.runasp.net"))
+    : "";
 
 export class ApiError extends Error {
   status: number;

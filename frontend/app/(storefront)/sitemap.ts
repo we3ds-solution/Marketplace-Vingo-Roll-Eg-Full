@@ -7,8 +7,8 @@ import {
   apiGetRooms,
 } from "@/lib/api/client";
 
-// Sitemap should reflect the live catalogue — evaluate per request.
-export const dynamic = "force-dynamic";
+// Sitemap should reflect the live catalogue â€” evaluate per request.
+export const revalidate = 60; // ISR: serve from Next's cache, revalidate in the background every minute
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const baseUrl = "https://vingoroll.com";

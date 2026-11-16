@@ -33,6 +33,10 @@ public class StatsController : ControllerBase
         var pendingOrders = await _context.Orders.CountAsync(o => o.Status == OrderStatus.Pending, cancellationToken);
         var leads = await _context.Leads.CountAsync(cancellationToken);
         var newLeads = await _context.Leads.CountAsync(l => l.Status == LeadStatus.New, cancellationToken);
+        var pendingVendors = await _context.VendorApplications.CountAsync(
+            v => v.Status == Vingo.Domain.Enums.VendorApplicationStatus.Pending, cancellationToken);
+        var vendors = await _context.VendorApplications.CountAsync(
+            v => v.Status == Vingo.Domain.Enums.VendorApplicationStatus.Approved, cancellationToken);
         var subscribers = await _context.NewsletterSubscribers.CountAsync(s => s.IsActive, cancellationToken);
         var reviews = await _context.Reviews.CountAsync(cancellationToken);
         var stories = await _context.InspirationStories.CountAsync(cancellationToken);
@@ -61,6 +65,8 @@ public class StatsController : ControllerBase
             pendingOrders,
             leads,
             newLeads,
+            pendingVendors,
+            vendors,
             subscribers,
             reviews,
             stories,

@@ -14,6 +14,7 @@ import {
   Mail,
   Star,
   Newspaper,
+  Store,
   type LucideIcon,
 } from "lucide-react";
 
@@ -24,6 +25,8 @@ type Stats = {
   collections: number;
   orders: number;
   pendingOrders: number;
+  pendingVendors: number;
+  vendors: number;
   leads: number;
   newLeads: number;
   subscribers: number;
@@ -42,12 +45,12 @@ type Stats = {
 type CardDef = {
   key: keyof Pick<
     Stats,
-    "products" | "categories" | "collections" | "orders" | "leads" | "subscribers" | "reviews" | "stories"
+    "products" | "categories" | "collections" | "orders" | "leads" | "subscribers" | "reviews" | "stories" | "vendors"
   > & string;
   label: string;
   icon: LucideIcon;
   href: string;
-  sub?: keyof Pick<Stats, "pendingOrders" | "newLeads"> & string;
+  sub?: keyof Pick<Stats, "pendingOrders" | "newLeads" | "pendingVendors"> & string;
   subLabel?: string;
 };
 
@@ -56,6 +59,7 @@ const CARDS: CardDef[] = [
   { key: "categories", label: "Categories", icon: FolderTree, href: "/admin/categories" },
   { key: "collections", label: "Collections", icon: Layers, href: "/admin/collections" },
   { key: "orders", label: "Orders", icon: ShoppingBag, href: "/admin/orders", sub: "pendingOrders", subLabel: "pending" },
+  { key: "vendors", label: "Vendors", icon: Store, href: "/admin/vendors", sub: "pendingVendors", subLabel: "pending" },
   { key: "leads", label: "Leads", icon: Inbox, href: "/admin/leads", sub: "newLeads", subLabel: "new" },
   { key: "subscribers", label: "Subscribers", icon: Mail, href: "/admin/subscribers" },
   { key: "reviews", label: "Reviews", icon: Star, href: "/admin/reviews" },
@@ -127,7 +131,7 @@ export default function AdminDashboardPage() {
               <AdminTh>Order</AdminTh>
               <AdminTh>Customer</AdminTh>
               <AdminTh>Status</AdminTh>
-              <AdminTh className="text-right">Total</AdminTh>
+              <AdminTh className="text-end">Total</AdminTh>
               <AdminTh>Placed</AdminTh>
             </AdminTHead>
             <tbody>
@@ -147,7 +151,7 @@ export default function AdminDashboardPage() {
                       {order.status}
                     </AdminBadge>
                   </AdminTd>
-                  <AdminTd className="text-right tabular-nums">{formatPrice(order.totalAmount)}</AdminTd>
+                  <AdminTd className="text-end tabular-nums">{formatPrice(order.totalAmount)}</AdminTd>
                   <AdminTd className="text-muted-foreground">
                     {new Date(order.createdAt).toLocaleDateString("en-US", {
                       month: "short",

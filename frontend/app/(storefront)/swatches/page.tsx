@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 
 import { useMemo, useState, type FormEvent } from "react";
 import { Check, CheckCircle2, GitCompare, Plus, X } from "lucide-react";
@@ -106,10 +106,10 @@ export default function SwatchesPage() {
         description={`Up to ${SWATCH_LIMIT} generous fabric samples delivered to your door — no strings, no card required.`}
       />
       <Section>
-        <div className="grid gap-10 lg:grid-cols-[1.7fr_1fr]">
+        <div className="grid gap-6 lg:gap-8 lg:grid-cols-[1.7fr_1fr]">
           {/* Catalog */}
           <div>
-            <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 xl:grid-cols-4">
+            <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 sm:gap-6 xl:grid-cols-4">
               {swatches.map((swatch) => {
                 const selectedCount = ids.includes(swatch.id);
                 const limitReached = ids.length >= SWATCH_LIMIT && !selectedCount;

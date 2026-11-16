@@ -81,7 +81,7 @@ export default function AdminProductsPage() {
         action={
           <Button asChild size="sm">
             <Link href="/admin/products/new">
-              <Plus className="mr-1.5 h-4 w-4" aria-hidden="true" />
+              <Plus className="me-1.5 h-4 w-4" aria-hidden="true" />
               New product
             </Link>
           </Button>
@@ -90,7 +90,7 @@ export default function AdminProductsPage() {
 
       <div className="mb-4 flex flex-wrap items-center gap-3">
         <div className="relative min-w-64 flex-1">
-          <Search className="text-muted-foreground pointer-events-none absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2" aria-hidden="true" />
+          <Search className="text-muted-foreground pointer-events-none absolute top-1/2 start-3 h-4 w-4 -translate-y-1/2" aria-hidden="true" />
           <Input
             value={search}
             onChange={(e) => {
@@ -98,7 +98,7 @@ export default function AdminProductsPage() {
               setPage(1);
             }}
             placeholder="Search name or slug…"
-            className="pl-9"
+            className="ps-9"
             aria-label="Search products"
           />
         </div>
@@ -139,7 +139,7 @@ export default function AdminProductsPage() {
               <AdminTh className="w-14"></AdminTh>
               <AdminTh>Product</AdminTh>
               <AdminTh>Category</AdminTh>
-              <AdminTh className="text-right">Price</AdminTh>
+              <AdminTh className="text-end">Price</AdminTh>
               <AdminTh>Flags</AdminTh>
               <AdminTh>Status</AdminTh>
             </AdminTHead>
@@ -167,7 +167,7 @@ export default function AdminProductsPage() {
                     <p className="text-muted-foreground mt-0.5 font-mono text-xs">{p.slug}</p>
                   </AdminTd>
                   <AdminTd className="text-muted-foreground">{p.categoryName ?? "—"}</AdminTd>
-                  <AdminTd className="text-right tabular-nums">{formatPrice(p.price)}</AdminTd>
+                  <AdminTd className="text-end tabular-nums">{formatPrice(p.price)}</AdminTd>
                   <AdminTd>
                     <div className="flex flex-wrap gap-1">
                       {p.isFeatured && <AdminBadge tone="green">Featured</AdminBadge>}
