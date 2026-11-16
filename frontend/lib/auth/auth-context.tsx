@@ -40,7 +40,13 @@ type AuthContextValue = {
 
 const AuthContext = createContext<AuthContextValue | null>(null);
 
-const API_URL = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:5000";
+/**
+ * Auth requests go through the same-origin /api/* proxy (next.config.ts
+ * rewrites). Never reference an absolute API origin from here — the browser
+ * would hit localhost:5000 locally or an HTTP API from the HTTPS page in
+ * production (blocked), and cookies would stop being first-party.
+ */
+const API_URL = "";
 
 /** Access tokens live in memory only — never localStorage. Refresh via HttpOnly cookie. */
 export function AuthProvider({ children }: { children: ReactNode }) {
