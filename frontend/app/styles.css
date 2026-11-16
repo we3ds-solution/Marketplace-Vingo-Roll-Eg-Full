@@ -93,6 +93,10 @@
   --sidebar-accent-foreground: oklch(0.3 0.031 47);
   --sidebar-border: oklch(0.884 0.018 79);
   --sidebar-ring: oklch(0.585 0.068 62);
+  /* Scrollbar palette (single shared rule set — see styles.css) */
+  --scrollbar-thumb: oklch(0.78 0.04 62);
+  --scrollbar-track: oklch(0.962 0.011 82);
+  --scrollbar-thumb-hover: oklch(0.68 0.045 62);
 }
 
 .dark {
@@ -133,6 +137,10 @@
   --sidebar-accent-foreground: oklch(0.925 0.016 82);
   --sidebar-border: oklch(0.318 0.019 52);
   --sidebar-ring: oklch(0.685 0.076 65);
+  /* Scrollbar palette (single shared rule set — see styles.css) */
+  --scrollbar-thumb: oklch(0.685 0.076 65);
+  --scrollbar-track: oklch(0.216 0.018 47);
+  --scrollbar-thumb-hover: oklch(0.72 0.08 65);
 }
 
 @layer base {
@@ -142,49 +150,45 @@
 
   html {
     scroll-behavior: smooth;
-    /* Custom scrollbar for light mode */
-    scrollbar-color: oklch(0.78 0.04 62) oklch(0.962 0.011 82);
+    /* One scrollbar system: thin, themed, inner — identical at every level.
+       Palette is variable-driven (see :root / .dark) so light and dark share
+       exactly one rule set — no duplicated constants, no drift. */
     scrollbar-width: thin;
+    scrollbar-color: var(--scrollbar-thumb) var(--scrollbar-track);
+    /* Reserve layout space for the scrollbar — content never sits under it
+       and there is no layout shift when it appears. */
+    scrollbar-gutter: stable;
   }
 
-  /* Webkit scrollbar styling (Chrome, Safari, Edge) - Light mode */
-  html::-webkit-scrollbar {
-    width: 10px;
+  /* WebKit (Chrome, Edge, Safari) — one styled system everywhere, html and
+     every inner scroll container alike (sidebar, modals, sheets, dropdowns). */
+  *::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
   }
 
-  html::-webkit-scrollbar-track {
-    background: oklch(0.962 0.011 82);
+  *::-webkit-scrollbar-track {
+    background: var(--scrollbar-track);
     border-radius: 100px;
   }
 
-  html::-webkit-scrollbar-thumb {
-    background: oklch(0.78 0.04 62);
-    border-radius: 100px;
-    border: 2px solid oklch(0.962 0.011 82);
-  }
-
-  html::-webkit-scrollbar-thumb:hover {
-    background: oklch(0.68 0.045 62);
-  }
-
-  /* Dark mode scrollbar */
-  .dark {
-    scrollbar-color: oklch(0.685 0.076 65) oklch(0.216 0.018 47);
-  }
-
-  .dark::-webkit-scrollbar-track {
-    background: oklch(0.216 0.018 47);
+  *::-webkit-scrollbar-thumb {
+    background: var(--scrollbar-thumb);
+    border: 2px solid var(--scrollbar-track);
     border-radius: 100px;
   }
 
-  .dark::-webkit-scrollbar-thumb {
-    background: oklch(0.685 0.076 65);
-    border: 2px solid oklch(0.216 0.018 47);
-    border-radius: 100px;
+  *::-webkit-scrollbar-thumb:hover {
+    background: var(--scrollbar-thumb-hover);
   }
 
-  .dark::-webkit-scrollbar-thumb:hover {
-    background: oklch(0.72 0.08 65);
+  /* No arrow buttons anywhere — ever. This is the single source of truth
+     for those ▲/▼ buttons and kills them in html and all inner panels. */
+  *::-webkit-scrollbar-button {
+    display: none !important;
+    width: 0 !important;
+    height: 0 !important;
+    background: transparent !important;
   }
 
   body {
