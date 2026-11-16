@@ -93,10 +93,9 @@
   --sidebar-accent-foreground: oklch(0.3 0.031 47);
   --sidebar-border: oklch(0.884 0.018 79);
   --sidebar-ring: oklch(0.585 0.068 62);
-  /* Scrollbar palette (single shared rule set — see styles.css) */
-  --scrollbar-thumb: oklch(0.78 0.04 62);
-  --scrollbar-track: oklch(0.962 0.011 82);
-  --scrollbar-thumb-hover: oklch(0.68 0.045 62);
+  /* Scrollbar palette — translucent floating thumb (overlay look) */
+  --scrollbar-thumb: oklch(0.585 0.068 62 / 0.65);
+  --scrollbar-thumb-hover: oklch(0.585 0.068 62);
 }
 
 .dark {
@@ -137,9 +136,8 @@
   --sidebar-accent-foreground: oklch(0.925 0.016 82);
   --sidebar-border: oklch(0.318 0.019 52);
   --sidebar-ring: oklch(0.685 0.076 65);
-  /* Scrollbar palette (single shared rule set — see styles.css) */
-  --scrollbar-thumb: oklch(0.685 0.076 65);
-  --scrollbar-track: oklch(0.216 0.018 47);
+  /* Scrollbar palette — translucent floating thumb (overlay look) */
+  --scrollbar-thumb: oklch(0.685 0.076 65 / 0.7);
   --scrollbar-thumb-hover: oklch(0.72 0.08 65);
 }
 
@@ -150,45 +148,76 @@
 
   html {
     scroll-behavior: smooth;
-    /* One scrollbar system: thin, themed, inner — identical at every level.
-       Palette is variable-driven (see :root / .dark) so light and dark share
-       exactly one rule set — no duplicated constants, no drift. */
+    /* One modern overlay-style scrollbar everywhere: floating thumb on a
+       transparent track, thin, same width at every level. Palette is
+       variable-driven (see :root / .dark) — one rule set, zero duplicates. */
     scrollbar-width: thin;
-    scrollbar-color: var(--scrollbar-thumb) var(--scrollbar-track);
-    /* Reserve layout space for the scrollbar — content never sits under it
-       and there is no layout shift when it appears. */
+    scrollbar-color: var(--scrollbar-thumb) transparent;
+    /* Reserve the gutter at the page level so layout never shifts and the
+       scrollbar never overlays content — the <html> scrollbar is inner,
+       not floating. */
     scrollbar-gutter: stable;
   }
 
-  /* WebKit (Chrome, Edge, Safari) — one styled system everywhere, html and
-     every inner scroll container alike (sidebar, modals, sheets, dropdowns). */
+  /* WebKit (Chrome, Edge, Safari) — single rule set for html and every
+     inner scroll container alike (modals, sheets, sidebar, dropdowns).
+     Track is transparent: the thumb floats over it — content never
+     collides, the scrollbar reads as an overlay, and it can never paint
+     over the panel's rounded corners. */
   *::-webkit-scrollbar {
     width: 8px;
     height: 8px;
   }
 
-  *::-webkit-scrollbar-track {
-    background: var(--scrollbar-track);
-    border-radius: 100px;
+  *::-webkit-scrollbar-track,
+  *::-webkit-scrollbar-corner {
+    background: transparent;
+    border: none;
   }
 
   *::-webkit-scrollbar-thumb {
     background: var(--scrollbar-thumb);
-    border: 2px solid var(--scrollbar-track);
+    border: 2px solid transparent; /* transparent inset padding around the thumb */
+    background-clip: padding-box;
     border-radius: 100px;
+    transition: background-color 0.2s ease;
   }
 
   *::-webkit-scrollbar-thumb:hover {
     background: var(--scrollbar-thumb-hover);
+    background-clip: padding-box;
   }
 
-  /* No arrow buttons anywhere — ever. This is the single source of truth
-     for those ▲/▼ buttons and kills them in html and all inner panels. */
-  *::-webkit-scrollbar-button {
+  /* Arrow buttons — banned globally, including legacy engines. */
+  *::-webkit-scrollbar-button,
+  *::-ms-scrollbar-button {
     display: none !important;
     width: 0 !important;
     height: 0 !important;
     background: transparent !important;
+    filter: none !important;
+  }
+
+  /* Legacy IE/Edge (::-ms-scrollbar) — match the modern system so older
+     engines don't fall back to themed arrow buttons. */
+  *::-ms-scrollbar {
+    width: 8px;
+    height: 8px;
+  }
+
+  *::-ms-scrollbar-track {
+    background: transparent;
+    border: none;
+    border-radius: 100px;
+  }
+
+  *::-ms-scrollbar-thumb {
+    background: var(--scrollbar-thumb);
+    border-radius: 100px;
+  }
+
+  *::-ms-scrollbar-thumb:hover {
+    background: var(--scrollbar-thumb-hover);
   }
 
   body {
